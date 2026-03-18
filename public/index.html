@@ -1552,7 +1552,7 @@ function downloadTemplate(type) {
 // ── RENDER BATCH TAB ──
 function renderBatch(el) {
   const hasRows = BS.rows.length > 0;
-  const hasResults = BS.results.filter(r => r.done).length > 0;
+  const hasResults = BS.results.filter(r => r?.done).length > 0;
 
   el.innerHTML = `
     <div class="batch-intro">
@@ -1647,16 +1647,19 @@ function renderBatch(el) {
                   ? '<span class="row-status row-processing">⏳ 处理中</span>'
                   : res.done
                     ? '<span class="row-status row-done">✓ 完成</span>'
-                    : '<span class="row-status row-error">✗ 失败</span>';
+                    : `<span class="row-status row-error" title="${res.error||''}">✗ 失败</span>`;
+              const t = rowGet(row,'产品标题','title','产品名称','商品标题') || Object.values(row)[0] || '';
+              const d = rowGet(row,'产品描述','description','描述','产品介绍') || Object.values(row)[1] || '';
+              const p = rowGet(row,'目标平台','platform','平台') || '亚马逊';
               return `<tr>
                 <td>${i+1}</td>
-                <td title="${row['产品标题']||''}">${(row['产品标题']||'').slice(0,30)}${(row['产品标题']||'').length>30?'…':''}</td>
-                <td title="${row['产品描述']||''}">${(row['产品描述']||'').slice(0,25)}…</td>
-                <td>${row['目标平台']||'亚马逊'}</td>
+                <td title="${t}">${t.slice(0,28)}${t.length>28?'…':''}</td>
+                <td title="${d}">${d.slice(0,22)}${d.length>22?'…':''}</td>
+                <td>${p}</td>
                 <td>${statusHtml}</td>
                 <td style="display:flex;gap:4px">
-                  <button onclick="loadRowToForm(${i})" title="载入到主表单" style="background:var(--primary-l);border:1px solid var(--primary-ll);color:var(--primary);border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer;font-weight:600">载入</button>
-                  <button onclick="genSingleRow(${i})" title="单独生成" style="background:#f3e8ff;border:1px solid #e9d5ff;color:#7c3aed;border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer;font-weight:600">生成</button>
+                  <button onclick="loadRowToForm(${i})" style="background:var(--primary-l);border:1px solid var(--primary-ll);color:var(--primary);border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer;font-weight:600">载入</button>
+                  <button onclick="genSingleRow(${i})" style="background:#f3e8ff;border:1px solid #e9d5ff;color:#7c3aed;border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer;font-weight:600">生成</button>
                 </td>
               </tr>`;
             }).join('')}
@@ -1665,15 +1668,15 @@ function renderBatch(el) {
       </div>
       ${BS.processing ? `
       <div style="padding:10px 14px;border-top:1px solid var(--border)">
-        <div style="font-size:11px;color:var(--text2);margin-bottom:4px">正在处理第 ${BS.results.filter(r=>r.done||r.processing).length} / ${BS.rows.length} 个...</div>
-        <div class="batch-progress-bar"><div class="batch-progress-fill" style="width:${Math.round(BS.results.filter(r=>r.done).length/BS.rows.length*100)}%"></div></div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:4px">正在处理第 ${BS.results.filter(r=>r?.done||r?.processing).length} / ${BS.rows.length} 个...</div>
+        <div class="batch-progress-bar"><div class="batch-progress-fill" style="width:${Math.round(BS.results.filter(r=>r?.done).length/BS.rows.length*100)}%"></div></div>
       </div>` : ''}
     </div>` : ''}
 
     <!-- RESULTS (shown when any done) -->
     ${hasResults ? `
     <div class="export-bar">
-      <div class="export-bar-title">✅ ${BS.results.filter(r=>r.done).length} 个产品文案已生成</div>
+      <div class="export-bar-title">✅ ${BS.results.filter(r=>r?.done).length} 个产品文案已生成</div>
       <button class="export-btn export-btn-outline" onclick="exportCsv()">📄 导出 CSV</button>
       <button class="export-btn export-btn-green" onclick="exportCsv(true)">⬇ 下载完整结果</button>
     </div>
@@ -1750,24 +1753,28 @@ function parseCsvFile(file) {
   const isExcel = /\.(xlsx|xls)$/i.test(file.name);
 
   if (isExcel) {
-    // Use SheetJS (loaded dynamically)
     loadSheetJS(() => {
       const reader = new FileReader();
       reader.onload = e => {
         try {
-          const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+          const wb = XLSX.read(e.target.result, { type: 'binary' });
           const ws = wb.Sheets[wb.SheetNames[0]];
           const matrix = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+          if (!matrix || matrix.length < 2) {
+            showToast('Excel 文件内容为空，请检查第一个 Sheet 是否有数据', 'error'); return;
+          }
           const parsed = parseRowsFromMatrix(matrix);
           if (!parsed || !parsed.rows.length) {
-            showToast('Excel 文件内容为空或格式不对', 'error'); return;
+            showToast('未解析到有效行，请确认表头在第一行', 'error'); return;
           }
           finishParse(parsed.rows);
         } catch(err) {
           showToast('Excel 解析失败：' + err.message, 'error');
+          console.error('XLSX error:', err);
         }
       };
-      reader.readAsArrayBuffer(file);
+      reader.onerror = () => showToast('文件读取失败，请重试', 'error');
+      reader.readAsBinaryString(file);
     });
   } else {
     // CSV / TSV
