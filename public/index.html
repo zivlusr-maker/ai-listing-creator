@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛍️ AI Listing Creator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f2f7;
+  --panel:#ffffff;
+  --border:#e3e7ef;
+  --primary:#2563eb;
+  --primary-h:#1d4ed8;
+  --primary-l:#eff6ff;
+  --primary-ll:#dbeafe;
+  --accent:#f59e0b;
+  --green:#10b981;
+  --red:#ef4444;
+  --text:#0f172a;
+  --text2:#64748b;
+  --text3:#94a3b8;
+  --sw:268px;
+  --rw:272px;
+  --r:8px;
+  --sh:0 1px 4px rgba(0,0,0,0.07),0 2px 8px rgba(0,0,0,0.04);
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);font-size:13px;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── TOP BAR ── */
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:0 18px;height:50px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:0 1px 0 var(--border)}
+.logo{font-size:16px;font-weight:800;display:flex;align-items:center;gap:7px;letter-spacing:-.3px}
+.logo-icon{font-size:20px}
+.logo-badge{background:linear-gradient(135deg,#2563eb,#7c3aed);color:white;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:4px;letter-spacing:.5px}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.topbar-btn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.topbar-btn-outline{background:white;border:1px solid var(--border);color:var(--text2)}
+.topbar-btn-outline:hover{background:var(--bg);color:var(--text)}
+.topbar-btn-primary{background:var(--primary);color:white}
+.topbar-btn-primary:hover{background:var(--primary-h)}
+
+/* ── MAIN ── */
+.layout{display:flex;flex:1;overflow:hidden}
+
+/* ── LEFT SIDEBAR ── */
+.sidebar{width:var(--sw);background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;gap:0}
+.sb-section{border-bottom:1px solid var(--border)}
+.sb-head{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;user-select:none;font-weight:700;font-size:12px;color:white;position:sticky;top:0;z-index:1}
+.sb-head.blue{background:linear-gradient(90deg,#2563eb,#3b82f6)}
+.sb-head.orange{background:linear-gradient(90deg,#d97706,#f59e0b)}
+.sb-head.teal{background:linear-gradient(90deg,#0d9488,#14b8a6)}
+.sb-head.violet{background:linear-gradient(90deg,#7c3aed,#8b5cf6)}
+.sb-head.rose{background:linear-gradient(90deg,#e11d48,#f43f5e)}
+.sb-body{padding:12px 14px;display:flex;flex-direction:column;gap:9px}
+
+lbl,label.lbl{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:3px;letter-spacing:.2px}
+.inp,textarea.inp,select.inp{width:100%;border:1px solid var(--border);border-radius:6px;padding:6px 9px;font-size:12px;font-family:inherit;color:var(--text);background:#fafbfd;outline:none;transition:border-color .15s,box-shadow .15s;resize:none}
+.inp:focus{border-color:var(--primary);background:white;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+select.inp{cursor:pointer}
+
+.upload-zone{border:1.5px dashed var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;background:#fafbfd;font-size:11px;color:var(--text3);transition:all .2s;line-height:1.6}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--primary);background:var(--primary-l);color:var(--primary)}
+.upload-zone.filled{border-color:var(--green);background:#f0fdf4;padding:6px}
+.upload-zone.filled img{max-height:90px;max-width:100%;object-fit:contain;border-radius:4px;display:block;margin:0 auto}
+.file-tag{display:flex;align-items:center;justify-content:space-between;background:var(--primary-l);border:1px solid var(--primary-ll);border-radius:5px;padding:4px 8px;font-size:11px;margin-top:4px}
+.file-tag .rm{cursor:pointer;color:var(--text3);font-size:16px;line-height:1;margin-left:4px}.file-tag .rm:hover{color:var(--red)}
+
+.btn{width:100%;padding:8px 12px;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;font-family:inherit;letter-spacing:.1px}
+.btn:active{transform:scale(.98)}
+.btn-blue{background:var(--primary);color:white}.btn-blue:hover{background:var(--primary-h)}
+.btn-blue:disabled{background:#93c5fd;cursor:not-allowed;transform:none}
+.btn-orange{background:#f59e0b;color:white}.btn-orange:hover{background:#d97706}
+.btn-teal{background:#0d9488;color:white}.btn-teal:hover{background:#0f766e}
+.btn-violet{background:#7c3aed;color:white}.btn-violet:hover{background:#6d28d9}
+.btn-rose{background:#e11d48;color:white}.btn-rose:hover{background:#be123c}
+.btn-ghost{background:white;color:var(--text);border:1px solid var(--border)}.btn-ghost:hover{background:var(--bg)}
+.btn-dark{background:#0f172a;color:white}.btn-dark:hover{background:#1e293b}
+
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.ratio-row{display:flex;flex-wrap:wrap;gap:6px}
+.radio-chip{display:flex;align-items:center;gap:3px;font-size:11px;cursor:pointer;padding:3px 7px;border-radius:4px;border:1px solid var(--border);background:white;transition:all .15s}
+.radio-chip:has(input:checked){background:var(--primary-l);border-color:var(--primary);color:var(--primary);font-weight:600}
+.radio-chip input{display:none}
+
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:rgba(255,255,255,.25);border-radius:50%;font-size:10px;font-weight:800;flex-shrink:0}
+
+/* ── CENTER ── */
+.center{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.tabs{background:var(--panel);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:flex-end;gap:1px;height:44px;overflow-x:auto;flex-shrink:0}
+.tab{padding:8px 13px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s;margin-bottom:-1px}
+.tab:hover{color:var(--text);background:#f8fafc}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:700;background:transparent}
+.tab-body{flex:1;overflow-y:auto;padding:18px;background:var(--bg)}
+
+/* ── COPY TAB ── */
+.copy-block{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:13px;box-shadow:var(--sh)}
+.copy-block-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.copy-block-content{font-size:13px;line-height:1.65;color:var(--text);outline:none;min-height:30px}
+.copy-block-content[contenteditable]:focus{background:var(--primary-l);border-radius:4px;padding:2px 4px;margin:-2px -4px}
+.copy-mini-btn{padding:3px 9px;background:var(--primary-l);border:1px solid var(--primary-ll);border-radius:4px;font-size:10px;font-weight:600;color:var(--primary);cursor:pointer;font-family:inherit;transition:all .15s}
+.copy-mini-btn:hover{background:var(--primary-ll)}
+.bullet-li{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px;line-height:1.55}
+.bullet-li:last-child{border:none}
+.bullet-dot{color:var(--primary);font-weight:800;flex-shrink:0;margin-top:1px}
+.action-row{display:flex;gap:8px;margin-top:4px}
+.action-btn{flex:1;padding:8px;background:white;border:1px solid var(--border);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-family:inherit;transition:all .15s;color:var(--text)}
+.action-btn:hover{background:var(--bg);border-color:var(--text2)}
+.action-btn.primary{background:var(--primary);color:white;border-color:var(--primary)}.action-btn.primary:hover{background:var(--primary-h)}
+
+/* ── PROMPT TAB ── */
+.prompt-block{background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;box-shadow:var(--sh)}
+.prompt-block-head{padding:10px 14px;background:#f8fafc;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:6px}
+.prompt-block-body{padding:12px 14px;font-size:12px;line-height:1.65;color:var(--text2)}
+.check-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.check-chip{display:flex;align-items:center;gap:4px;padding:4px 9px;border-radius:5px;border:1px solid var(--border);background:white;font-size:11px;cursor:pointer;transition:all .15s}
+.check-chip:has(input:checked){background:var(--primary-l);border-color:var(--primary);color:var(--primary);font-weight:600}
+.check-chip input{display:none}
+.gen-panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:var(--sh)}
+
+/* ── IMAGES TAB ── */
+.gen-status-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--sh)}
+.gen-stat-head{font-weight:700;font-size:12px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.gen-stat-item{font-size:11px;color:var(--text2);padding:2px 0;display:flex;align-items:center;gap:5px}
+.chk{color:var(--green);font-size:13px}
+.err{color:var(--red);font-size:13px}
+.img-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.img-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;position:relative;cursor:pointer;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s}
+.img-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.img-card img{width:100%;height:210px;object-fit:contain;background:#f8fafc;display:block}
+.img-card-placeholder{width:100%;height:210px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--text3);font-size:11px}
+.img-card-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(0,0,0,.6),transparent);color:white;font-size:10px;padding:10px 8px 6px;font-weight:600}
+.img-card-actions{display:flex;gap:6px;padding:8px}
+.img-action{flex:1;padding:5px;background:#f8fafc;border:1px solid var(--border);border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;text-align:center;font-family:inherit;transition:all .15s}
+.img-action:hover{background:var(--primary-l);color:var(--primary);border-color:var(--primary)}
+
+/* ── A+ TAB ── */
+.aplus-intro{background:linear-gradient(135deg,#1e293b 0%,#1e3a8a 100%);color:white;border-radius:10px;padding:16px;margin-bottom:14px}
+.aplus-intro h3{font-size:15px;font-weight:800;margin-bottom:5px}
+.aplus-intro p{font-size:12px;opacity:.8;line-height:1.6}
+.step-badge{display:inline-block;background:rgba(255,255,255,.15);color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;margin-bottom:10px}
+.aplus-module{background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;box-shadow:var(--sh)}
+.aplus-module-head{background:#f8fafc;border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:10px}
+.aplus-num{width:24px;height:24px;background:var(--primary);color:white;border-radius:50%;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.aplus-module-title{font-weight:700;font-size:12px;flex:1}
+.aplus-size{font-size:10px;color:var(--text3)}
+.mod-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;margin-left:6px}
+.tag-orange{background:#fef3c7;color:#d97706}
+.tag-green{background:#dcfce7;color:#059669}
+.tag-violet{background:#f3e8ff;color:#7c3aed}
+.tag-blue{background:#dbeafe;color:#1d4ed8}
+.aplus-module-body{padding:14px}
+.aplus-hero-block{background:linear-gradient(135deg,#1e293b,#334155);color:white;border-radius:8px;padding:20px;margin-bottom:8px}
+.aplus-hero-block h3{font-size:16px;font-weight:800;margin-bottom:7px;line-height:1.3}
+.aplus-hero-block p{font-size:11.5px;opacity:.75;line-height:1.6}
+.aplus-hint{font-size:11px;color:var(--text3);font-style:italic}
+.aplus-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.aplus-feature-card{border-radius:8px;padding:14px;text-align:center}
+.aplus-feature-card .ico{font-size:26px;margin-bottom:7px}
+.aplus-feature-card h4{font-size:12px;font-weight:700;margin-bottom:4px}
+.aplus-feature-card p{font-size:11px;color:var(--text2);line-height:1.4}
+.comp-table{width:100%;border-collapse:collapse;font-size:11px}
+.comp-table th,.comp-table td{padding:7px 10px;border:1px solid var(--border);text-align:left}
+.comp-table th{background:#f8fafc;font-weight:700}
+.comp-table td.ours{color:var(--green);font-weight:700;text-align:center}
+.comp-table td.no{color:var(--red);text-align:center}
+.comp-table td.yes{color:var(--green);text-align:center}
+.scene-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.scene-card{background:linear-gradient(135deg,#f1f5f9,#e2e8f0);border-radius:7px;padding:12px 8px;text-align:center;font-size:11px;font-weight:600}
+
+/* ── OVERLAY TAB ── */
+.overlay-intro{font-size:12px;color:var(--text2);margin-bottom:14px;padding:10px 12px;background:white;border:1px solid var(--border);border-radius:8px;line-height:1.6}
+.drop-zone{border:2px dashed var(--border);border-radius:10px;height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text3);font-size:12px;cursor:pointer;transition:all .2s;background:white;margin-bottom:14px}
+.drop-zone:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-l)}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.range-row{display:flex;flex-direction:column;gap:5px}
+.range-row input[type=range]{width:100%;accent-color:var(--primary)}
+.result-canvas-wrap{background:white;border:1px solid var(--border);border-radius:10px;min-height:200px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+#overlayCanvas{max-width:100%;display:block;border-radius:8px}
+
+/* ── BRAND TAB ── */
+.brand-intro{font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6}
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.style-card{border:2px solid var(--border);border-radius:9px;padding:11px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:9px;background:white}
+.style-card:hover{border-color:var(--primary);background:var(--primary-l);transform:translateY(-1px)}
+.style-card.sel{border-color:var(--primary);background:var(--primary-l)}
+.swatch-row{display:flex;gap:3px}
+.swatch{width:13px;height:13px;border-radius:50%;border:1px solid rgba(0,0,0,.08)}
+.style-info .name{font-size:12px;font-weight:700;line-height:1.2}
+.style-info .sub{font-size:10px;color:var(--text3)}
+.active-style-badge{background:linear-gradient(90deg,#059669,#10b981);color:white;padding:7px 12px;border-radius:7px;font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.brand-textarea{width:100%;border:1px solid var(--border);border-radius:7px;padding:10px;font-size:11px;font-family:'JetBrains Mono',monospace;line-height:1.6;color:var(--text);background:white;resize:vertical;min-height:100px;outline:none}
+.brand-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.upload-pdf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+
+/* ── SETTINGS TAB ── */
+.settings-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)}
+.settings-card h3{font-size:13px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.settings-field{margin-bottom:12px}
+.settings-field label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px}
+.settings-hint{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.5}
+.settings-hint a{color:var(--primary)}
+.api-status{display:flex;align-items:center;gap:6px;font-size:11px;padding:6px 10px;border-radius:6px;margin-top:8px}
+.api-status.ok{background:#dcfce7;color:#166534}
+.api-status.err{background:#fee2e2;color:#991b1b}
+.api-status.none{background:#f1f5f9;color:var(--text2)}
+
+/* ── RIGHT PANEL ── */
+.rpanel{width:var(--rw);border-left:1px solid var(--border);background:var(--panel);overflow-y:auto;flex-shrink:0;padding:14px;display:flex;flex-direction:column;gap:12px}
+.rcard{background:#fafbfd;border:1px solid var(--border);border-radius:9px;padding:12px}
+.rcard-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin-bottom:9px;display:flex;align-items:center;gap:6px;color:var(--text)}
+.analysis-line{font-size:11.5px;line-height:1.7;color:var(--text2)}
+.atag{display:inline-block;background:var(--primary-l);color:var(--primary);border-radius:4px;padding:1px 7px;font-size:10px;font-weight:600;margin:2px 2px 2px 0}
+.atag.green{background:#dcfce7;color:#166534}
+.atag.orange{background:#fef3c7;color:#92400e}
+.json-pre{background:#0f172a;color:#a5f3fc;padding:10px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:9.5px;line-height:1.55;max-height:280px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+.json-edit{width:100%;border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:9.5px;line-height:1.5;padding:8px;color:var(--text);background:white;resize:vertical;min-height:80px;outline:none}
+.json-edit:focus{border-color:var(--primary)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:50px 20px;color:var(--text3)}
+.empty .ico{font-size:44px;margin-bottom:14px;display:block}
+.empty p{font-size:13px;line-height:1.7}
+.empty strong{color:var(--text2)}
+
+/* ── MODALS ── */
+.overlay-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.overlay-modal.show{display:flex}
+.modal-box{background:white;border-radius:14px;padding:30px 36px;text-align:center;width:300px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-spinner{width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+.modal-box h3{font-size:16px;font-weight:800;margin-bottom:6px}
+.modal-box p{font-size:12px;color:var(--text2);line-height:1.5}
+.progress{height:4px;background:#e2e8f0;border-radius:4px;margin-top:16px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#2563eb,#7c3aed);transition:width .4s;width:0%}
+
+.img-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:center;justify-content:center}
+.img-modal.show{display:flex}
+.img-modal img{max-width:90vw;max-height:90vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.img-modal-close{position:absolute;top:18px;right:22px;color:white;font-size:30px;cursor:pointer;line-height:1;opacity:.8}
+.img-modal-close:hover{opacity:1}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:22px;right:22px;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:400;transform:translateY(70px) scale(.95);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.toast.show{transform:translateY(0) scale(1);opacity:1}
+.toast.success{background:#166534;color:white}
+.toast.error{background:#991b1b;color:white}
+.toast.info{background:#1d4ed8;color:white}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#94a3b8}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--border);margin:2px 0}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="logo">
+    <span class="logo-icon">🛍️</span>
+    AI Listing Creator
+    <span class="logo-badge">POWERED BY GEMINI</span>
+  </div>
+  <div class="topbar-right">
+    <button class="topbar-btn topbar-btn-outline" onclick="switchTab('settings')">⚙️ 设置 API</button>
+    <button class="topbar-btn topbar-btn-primary" onclick="generateAll()">⚡ 一键全部生成</button>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- SECTION 1: IMAGE -->
+    <div class="sb-section">
+      <div class="sb-head blue">
+        <span class="step-num">1</span> 产品主图
+      </div>
+      <div class="sb-body">
+        <div class="upload-zone" id="uploadZone"
+          onclick="document.getElementById('imgInput').click()"
+          ondragover="e=>{e.preventDefault();this.classList.add('drag')}"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="handleDrop(event)">
+          <div style="font-size:22px">📷</div>
+          <div style="font-size:11px;line-height:1.5">拖拽或点击上传产品主图<br><span style="color:var(--text3)">（支持多张，JPG/PNG/WEBP）</span></div>
+        </div>
+        <input type="file" id="imgInput" accept="image/*" multiple style="display:none" onchange="handleImageUpload(this)">
+        <div id="fileList"></div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: PRODUCT INFO -->
+    <div class="sb-section">
+      <div class="sb-head orange">
+        <span class="step-num">2</span> 产品信息
+      </div>
+      <div class="sb-body">
+        <div>
+          <label class="lbl">产品标题</label>
+          <textarea class="inp" id="productTitle" rows="4" placeholder="输入或粘贴产品标题..." oninput="state.productTitle=this.value"></textarea>
+        </div>
+        <div>
+          <label class="lbl">产品描述</label>
+          <textarea class="inp" id="productDesc" rows="5" placeholder="输入产品描述，越详细效果越好..." oninput="state.productDesc=this.value"></textarea>
+        </div>
+        <div>
+          <label class="lbl">目标平台</label>
+          <select class="inp" id="platform" onchange="state.platform=this.value">
+            <option value="亚马逊">🛒 亚马逊（Amazon）</option>
+            <option value="Shopify">🏪 Shopify 独立站</option>
+            <option value="eBay">📦 eBay</option>
+            <option value="速卖通">🌏 速卖通（AliExpress）</option>
+            <option value="Walmart">🏬 Walmart</option>
+            <option value="Etsy">🎨 Etsy</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: AI EXTRACT -->
+    <div class="sb-section">
+      <div class="sb-head teal">
+        <span class="step-num">3</span> AI 提取
+      </div>
+      <div class="sb-body">
+        <button class="btn btn-teal" onclick="aiExtract()">🤖 AI提取产品特征</button>
+        <div style="font-size:10px;color:var(--text3);text-align:center;line-height:1.5">上传图片后点击，AI 将自动分析产品并填充特征</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- SECTION 4: COPY -->
+    <div class="sb-section">
+      <div class="sb-head violet">
+        <span class="step-num">4</span> 生成文案
+      </div>
+      <div class="sb-body">
+        <button class="btn btn-violet" onclick="generateCopy()">📝 全部生成</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- SECTION 5: IMAGES -->
+    <div class="sb-section">
+      <div class="sb-head rose">
+        <span class="step-num">5</span> 生成图片
+      </div>
+      <div class="sb-body">
+        <button class="btn btn-orange" onclick="generatePrompts()">✨ 生成全套组图Prompt</button>
+        <div>
+          <label class="lbl">图片比例</label>
+          <div class="ratio-row">
+            <label class="radio-chip"><input type="radio" name="ratio" value="1:1" checked>1:1</label>
+            <label class="radio-chip"><input type="radio" name="ratio" value="3:4">3:4</label>
+            <label class="radio-chip"><input type="radio" name="ratio" value="4:3">4:3</label>
+            <label class="radio-chip"><input type="radio" name="ratio" value="16:9">16:9</label>
+            <label class="radio-chip"><input type="radio" name="ratio" value="9:16">9:16</label>
+            <label class="radio-chip"><input type="radio" name="ratio" value="21:9">21:9</label>
+          </div>
+        </div>
+        <button class="btn btn-rose" onclick="batchGenImages()">🖼️ 批量生成全部图片</button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- CENTER -->
+  <main class="center">
+    <nav class="tabs">
+      <div class="tab active" onclick="switchTab('copy')" data-tab="copy">📄 文案结果</div>
+      <div class="tab" onclick="switchTab('prompt')" data-tab="prompt">🎨 组图Prompt</div>
+      <div class="tab" onclick="switchTab('images')" data-tab="images">🖼️ 生成的图片</div>
+      <div class="tab" onclick="switchTab('aplus')" data-tab="aplus">✨ A+图片</div>
+      <div class="tab" onclick="switchTab('overlay')" data-tab="overlay">📝 文字叠加</div>
+      <div class="tab" onclick="switchTab('brand')" data-tab="brand">🎨 品牌风格</div>
+      <div class="tab" onclick="switchTab('settings')" data-tab="settings">⚙️ 设置</div>
+    </nav>
+    <div class="tab-body" id="tabBody"></div>
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <aside class="rpanel">
+    <div class="rcard-title" style="font-size:13px;font-weight:800;padding-bottom:8px;border-bottom:1px solid var(--border)">📊 产品分析</div>
+    <div class="rcard">
+      <div class="rcard-title">🔍 AI 分析摘要</div>
+      <div class="analysis-line" id="analysisSummary">
+        <div class="empty" style="padding:20px 10px">
+          <span class="ico" style="font-size:28px">🔍</span>
+          <p style="font-size:11px">上传图片并点击<br><strong>「AI提取产品特征」</strong><br>开始分析</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="rcard-title" style="margin-bottom:6px">📦 完整 JSON <span style="font-size:9px;opacity:.6;font-weight:400">（高级）</span></div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:5px;font-weight:600">分析 JSON（可编辑）</div>
+      <textarea class="json-edit" id="analysisJson" placeholder='{
+  "product_name": "",
+  "category": "",
+  "features": [],
+  "selling_points": []
+}'></textarea>
+    </div>
+  </aside>
+
+</div>
+
+<!-- LOADING MODAL -->
+<div class="overlay-modal" id="loadingModal">
+  <div class="modal-box">
+    <div class="modal-spinner"></div>
+    <h3 id="modalTitle">处理中...</h3>
+    <p id="modalDesc">AI 正在工作，请稍候</p>
+    <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</div>
+
+<!-- IMAGE LIGHTBOX -->
+<div class="img-modal" id="imgLightbox" onclick="this.classList.remove('show')">
+  <span class="img-modal-close">✕</span>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ╔══════════════════════════════════════╗
+// ║            STATE                    ║
+// ╚══════════════════════════════════════╝
+const S = {
+  images: [],
+  productTitle: '',
+  productDesc: '',
+  platform: '亚马逊',
+  apiKey: localStorage.getItem('alc_apikey') || '',
+  model: localStorage.getItem('alc_model') || 'gemini-2.5-flash-preview-04-17',
+  analysis: null,
+  copyResult: null,
+  prompts: [],
+  selectedPrompts: new Set(),
+  generatedImages: [],
+  brandStyle: localStorage.getItem('alc_brand') || 'salon_pro',
+  activeTab: 'copy',
+};
+
+// Brand styles
+const BRANDS = [
+  {id:'soft_pink',   name:'柔粉甜美', sub:'Soft Pink',        colors:['#f9a8d4','#fce7f3','#fbcfe8','#ec4899']},
+  {id:'french',      name:'法式优雅', sub:'French Elegance',  colors:['#92400e','#b45309','#d97706','#78350f']},
+  {id:'salon_pro',   name:'沙龙专业', sub:'Salon Pro',        colors:['#f8fafc','#c0c0c0','#333333','#008BBB']},
+  {id:'vibrant_pop', name:'活力缤纷', sub:'Vibrant Pop',      colors:['#ec4899','#8b5cf6','#06b6d4','#f59e0b']},
+  {id:'natural',     name:'自然有机', sub:'Natural Organic',  colors:['#84cc16','#65a30d','#d9f99d','#4d7c0f']},
+  {id:'kawaii',      name:'日系软萌', sub:'Japanese Kawaii',  colors:['#fce7f3','#fbcfe8','#f9a8d4','#be185d']},
+  {id:'korean',      name:'韩系温柔', sub:'Korean Soft',      colors:['#fef3c7','#fde68a','#f59e0b','#92400e']},
+  {id:'luxury',      name:'奢华闪耀', sub:'Luxury Glam',      colors:['#1a1a1a','#d4a574','#8b0000','#2d2d2d']},
+  {id:'xiaohongshu', name:'小红书', sub:'Xiaohongshu',        colors:['#ff2d55','#ff6b6b','#ffd93d','#6bcb77']},
+  {id:'minimal',     name:'极简纯净', sub:'Pure Minimal',     colors:['#ffffff','#f8fafc','#94a3b8','#0f172a']},
+];
+
+// ╔══════════════════════════════════════╗
+// ║           TABS                      ║
+// ╚══════════════════════════════════════╝
+function switchTab(tab) {
+  S.activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  renderTab(tab);
+}
+function renderTab(t) {
+  const el = document.getElementById('tabBody');
+  ({copy:renderCopy, prompt:renderPrompt, images:renderImages, aplus:renderAplus,
+    overlay:renderOverlay, brand:renderBrand, settings:renderSettings}[t] || renderCopy)(el);
+}
+
+// ╔══════════════════════════════════════╗
+// ║        COPY TAB                     ║
+// ╚══════════════════════════════════════╝
+function renderCopy(el) {
+  if (!S.copyResult) {
+    el.innerHTML = `<div class="empty">
+      <span class="ico">✍️</span>
+      <p>填写产品信息后点击左侧<br><strong>「全部生成」</strong>或顶部<br><strong>「⚡ 一键全部生成」</strong></p>
+    </div>`;
+    return;
+  }
+  const r = S.copyResult;
+  el.innerHTML = `
+    <div class="copy-block">
+      <div class="copy-block-label">
+        <span>📌 标题</span>
+        <button class="copy-mini-btn" onclick="copyText('copyTitleEl')">复制</button>
+      </div>
+      <div class="copy-block-content" id="copyTitleEl" contenteditable="true">${r.title||''}</div>
+    </div>
+    <div class="copy-block">
+      <div class="copy-block-label">
+        <span>🔍 优化标题（SEO）</span>
+        <button class="copy-mini-btn" onclick="copyText('copyOptEl')">复制</button>
+      </div>
+      <div class="copy-block-content" id="copyOptEl" contenteditable="true">${r.optimizedTitle||''}</div>
+    </div>
+    <div class="copy-block">
+      <div class="copy-block-label">
+        <span>⭐ 五行卖点（Bullet Points）</span>
+        <button class="copy-mini-btn" onclick="copyBullets()">复制</button>
+      </div>
+      <div id="bulletContainer">
+        ${(r.bullets||[]).map((b,i)=>`
+        <div class="bullet-li" id="bl${i}">
+          <span class="bullet-dot">•</span>
+          <span contenteditable="true" style="flex:1;outline:none">${b}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="copy-block">
+      <div class="copy-block-label">
+        <span>📝 产品描述</span>
+        <button class="copy-mini-btn" onclick="copyText('copyDescEl')">复制</button>
+      </div>
+      <div class="copy-block-content" id="copyDescEl" contenteditable="true" style="min-height:100px;white-space:pre-wrap">${r.description||''}</div>
+    </div>
+    <div class="action-row">
+      <button class="action-btn" onclick="copyAllCopy()">📋 复制全部文案</button>
+      <button class="action-btn primary" onclick="generateCopy()">🔄 重新生成</button>
+    </div>`;
+}
+
+// ╔══════════════════════════════════════╗
+// ║        PROMPT TAB                   ║
+// ╚══════════════════════════════════════╝
+function renderPrompt(el) {
+  if (!S.prompts.length) {
+    el.innerHTML = `<div class="empty">
+      <span class="ico">🎨</span>
+      <p>点击左侧<br><strong>「生成全套组图Prompt」</strong><br>AI 规划专业摄影场景</p>
+    </div>`;
+    return;
+  }
+  const promptBlocks = S.prompts.map((p,i) => `
+    <div class="prompt-block">
+      <div class="prompt-block-head">📸 ${p.label}</div>
+      <div class="prompt-block-body">${p.text}</div>
+    </div>`).join('');
+
+  const checks = S.prompts.map((p,i) => `
+    <label class="check-chip">
+      <input type="checkbox" ${S.selectedPrompts.has(i)?'checked':''} onchange="togglePromptSel(${i},this.checked)">
+      ${p.label}
+    </label>`).join('');
+
+  el.innerHTML = `
+    ${promptBlocks}
+    <div class="gen-panel">
+      <div style="font-weight:700;font-size:13px;margin-bottom:10px">选择要生成的图片：</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:7px">勾选需要生成的 Prompt</div>
+      <div class="check-grid">${checks}</div>
+      <div style="margin-bottom:10px">
+        <label class="lbl">比例</label>
+        <div class="ratio-row">
+          <label class="radio-chip"><input type="radio" name="ratio2" value="1:1" checked>1:1</label>
+          <label class="radio-chip"><input type="radio" name="ratio2" value="3:4">3:4</label>
+          <label class="radio-chip"><input type="radio" name="ratio2" value="4:3">4:3</label>
+          <label class="radio-chip"><input type="radio" name="ratio2" value="16:9">16:9</label>
+          <label class="radio-chip"><input type="radio" name="ratio2" value="9:16">9:16</label>
+          <label class="radio-chip"><input type="radio" name="ratio2" value="21:9">21:9</label>
+        </div>
+      </div>
+      <button class="btn btn-rose" onclick="generateSelectedImages()">🖼️ 生成选中图片</button>
+    </div>`;
+}
+
+function togglePromptSel(i, v) {
+  v ? S.selectedPrompts.add(i) : S.selectedPrompts.delete(i);
+}
+
+// ╔══════════════════════════════════════╗
+// ║        IMAGES TAB                   ║
+// ╚══════════════════════════════════════╝
+function renderImages(el) {
+  if (!S.generatedImages.length) {
+    el.innerHTML = `<div class="empty">
+      <span class="ico">🖼️</span>
+      <p>先生成组图 Prompt<br>然后点击<br><strong>「批量生成全部图片」</strong></p>
+    </div>`;
+    return;
+  }
+  const stats = S.generatedImages.map(g =>
+    `<div class="gen-stat-item">${g.url?'<span class="chk">✓</span>':'<span class="err">✗</span>'} ${g.label}${g.error?` - ${g.error}`:''}</div>`).join('');
+  const cards = S.generatedImages.map((g,i) => `
+    <div class="img-card">
+      ${g.url
+        ? `<img src="${g.url}" alt="${g.label}" onclick="openLightbox('${g.url}')">`
+        : `<div class="img-card-placeholder"><div style="font-size:24px">${g.error?'❌':'⏳'}</div><div>${g.error||'生成中...'}</div></div>`}
+      <div class="img-card-label">${g.label}</div>
+      ${g.url ? `<div class="img-card-actions">
+        <button class="img-action" onclick="openLightbox('${g.url}')">🔍 查看</button>
+        <button class="img-action" onclick="downloadImg('${g.url}','${g.label}')">⬇ 下载</button>
+      </div>` : ''}
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div class="gen-status-card">
+      <div class="gen-stat-head">🖼️ 生成状态 · 已完成 ${S.generatedImages.filter(g=>g.url).length}/${S.generatedImages.length} 张</div>
+      ${stats}
+    </div>
+    <div class="img-grid">${cards}</div>
+    <button class="btn btn-dark" style="margin-top:14px" onclick="saveAllImages()">🗂️ 一键保存全部</button>`;
+}
+
+// ╔══════════════════════════════════════╗
+// ║        A+ TAB                       ║
+// ╚══════════════════════════════════════╝
+function renderAplus(el) {
+  const brand = S.copyResult?.optimizedTitle || S.productTitle || 'Your Product';
+  el.innerHTML = `
+    <div class="aplus-intro">
+      <h3>Amazon A+ Content 智能方案</h3>
+      <p>AI 自动为你规划完整 A+ 页面：推荐模块组合、生成文案内容和配图方案，一键批量生成全套图片。</p>
+    </div>
+    <div class="step-badge">Step 1: AI 生成 A+ 方案</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px">基于产品分析结果，AI 将推荐最佳 A+ 模块组合，并生成每个模块的文案与配图提示词。</p>
+    <button class="btn btn-violet" onclick="generateAplus()" id="aplusBtn">🎯 生成 A+ 方案</button>
+    <div id="aplusStatus" style="margin-top:10px;font-size:12px"></div>
+    <div id="aplusModules" style="margin-top:14px"></div>`;
+}
+
+function generateAplus() {
+  const btn = document.getElementById('aplusBtn');
+  btn.classList.add('loading');
+  btn.innerHTML = '<span class="spin"></span> 生成中...';
+  const brand = S.copyResult?.optimizedTitle || S.productTitle || 'Your Product';
+  const features = S.analysis?.features || ['天然材料','人体工学设计','环保认证','耐用材质'];
+  const selling = S.analysis?.selling_points || ['高品质','易使用','效果显著'];
+
+  setTimeout(() => {
+    document.getElementById('aplusStatus').innerHTML = '<span style="color:var(--green);font-weight:600">✓ 方案生成成功！共 6 个模块</span>';
+    btn.classList.remove('loading');
+    btn.innerHTML = '🎯 生成 A+ 方案';
+    document.getElementById('aplusModules').innerHTML = `
+      <div class="aplus-module">
+        <div class="aplus-module-head">
+          <div class="aplus-num">1</div>
+          <div style="flex:1">
+            <div class="aplus-module-title">🏔️ 包含文本的高级背景图片 <span class="mod-tag tag-orange">品牌主题与口号</span></div>
+            <div class="aplus-size">桌面 1464×600 | 移动 600×450</div>
+          </div>
+        </div>
+        <div class="aplus-module-body">
+          <div class="aplus-hero-block">
+            <h3>${brand}</h3>
+            <p>Unlock Your Inner Glow — Discover the secret to radiant, healthy skin. Our eco-friendly product transforms your daily routine into a premium spa-like experience, nurturing your body and spirit.</p>
+          </div>
+          <div class="aplus-hint">Captivate immediately with a strong brand statement and hero image, establishing a premium, natural, and calming mood.</div>
+        </div>
+      </div>
+      <div class="aplus-module">
+        <div class="aplus-module-head">
+          <div class="aplus-num">2</div>
+          <div style="flex:1">
+            <div class="aplus-module-title">📸 包含文本的高级双图片 <span class="mod-tag tag-green">核心益处展示</span></div>
+            <div class="aplus-size">桌面 650×350 | 移动：同桌面</div>
+          </div>
+        </div>
+        <div class="aplus-module-body">
+          <div class="aplus-2col">
+            ${features.slice(0,4).map((f,i) => {
+              const colors = ['#f0fdf4','#eff6ff','#fef3c7','#f3e8ff'];
+              const icons = ['🌿','✨','💪','🎯'];
+              return `<div class="aplus-feature-card" style="background:${colors[i%4]}">
+                <div class="ico">${icons[i%4]}</div>
+                <h4>${f}</h4>
+                <p>${selling[i] || '高品质体验'}</p>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="aplus-module">
+        <div class="aplus-module-head">
+          <div class="aplus-num">3</div>
+          <div style="flex:1">
+            <div class="aplus-module-title">📋 规格比较表格 <span class="mod-tag tag-violet">竞品对比</span></div>
+            <div class="aplus-size">桌面：满宽 | 移动：水平滚动</div>
+          </div>
+        </div>
+        <div class="aplus-module-body">
+          <table class="comp-table">
+            <tr><th>特性</th><th style="color:var(--primary)">本产品 ⭐</th><th>竞品 A</th><th>竞品 B</th></tr>
+            ${features.slice(0,4).map((f,i) => `
+            <tr${i%2?' style="background:#fafbfc"':''}>
+              <td>${f}</td>
+              <td class="ours">✓</td>
+              <td class="${i%2?'no':'yes'}">${i%2?'✗':'✓'}</td>
+              <td class="${i%3===0?'yes':'no'}">${i%3===0?'✓':'✗'}</td>
+            </tr>`).join('')}
+          </table>
+        </div>
+      </div>
+      <div class="aplus-module">
+        <div class="aplus-module-head">
+          <div class="aplus-num">4</div>
+          <div style="flex:1">
+            <div class="aplus-module-title">🎬 使用步骤说明 <span class="mod-tag tag-blue">教程指引</span></div>
+            <div class="aplus-size">桌面 970×300</div>
+          </div>
+        </div>
+        <div class="aplus-module-body">
+          <div class="scene-grid">
+            ${['Step 1\n准备', 'Step 2\n使用', 'Step 3\n效果', 'Step 4\n维护'].map((s,i) => `
+            <div class="scene-card">
+              <div style="font-size:20px;margin-bottom:6px">${['1️⃣','2️⃣','3️⃣','4️⃣'][i]}</div>
+              ${s.replace('\n','<br>')}
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="aplus-module">
+        <div class="aplus-module-head">
+          <div class="aplus-num">5</div>
+          <div style="flex:1">
+            <div class="aplus-module-title">🌟 顾客评价展示 <span class="mod-tag tag-orange">社会证明</span></div>
+            <div class="aplus-size">桌面：满宽</div>
+          </div>
+        </div>
+        <div class="aplus-module-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            ${['Amazing product!','Highly recommend!','Best purchase ever!'].map(q => `
+            <div style="background:#f8fafc;border-radius:7px;padding:10px;font-size:11px">
+              <div style="color:#f59e0b;margin-bottom:4px">★★★★★</div>
+              <div style="font-style:italic;color:var(--text2)">"${q}"</div>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="aplus-module">
+        <div class="aplus-module-head">
+          <div class="aplus-num">6</div>
+          <div style="flex:1">
+            <div class="aplus-module-title">📦 品牌故事 <span class="mod-tag tag-green">品牌形象</span></div>
+            <div class="aplus-size">桌面：满宽</div>
+          </div>
+        </div>
+        <div class="aplus-module-body">
+          <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:8px;padding:14px">
+            <h4 style="font-size:13px;margin-bottom:6px">Our Story</h4>
+            <p style="font-size:12px;color:var(--text2);line-height:1.6">We believe everyone deserves premium quality products that are both effective and sustainable. Founded with a passion for natural living, we create products that make a difference in your daily routine.</p>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-violet" style="margin-top:6px" onclick="batchGenImages()">🖼️ 批量生成 A+ 全套图片</button>`;
+  }, 600);
+}
+
+// ╔══════════════════════════════════════╗
+// ║        OVERLAY TAB                  ║
+// ╚══════════════════════════════════════╝
+let overlayImg = null;
+
+function renderOverlay(el) {
+  el.innerHTML = `
+    <div class="overlay-intro">
+      💡 <strong>在生成的图片上添加卖点文字、功能标注</strong><br>
+      从上方「生成的图片」下载图片后上传到这里进行标注。
+    </div>
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('overlayImgIn').click()"
+      ondragover="event.preventDefault();this.classList.add('drag')"
+      ondragleave="this.classList.remove('drag')"
+      ondrop="handleOverlayDrop(event)">
+      <div style="font-size:32px">🖼️</div>
+      <div>拖放图片至此处</div>
+      <div style="font-size:10px;color:var(--text3)">— 或 —</div>
+      <div style="font-size:11px">点击上传</div>
+    </div>
+    <input type="file" id="overlayImgIn" accept="image/*" style="display:none" onchange="loadOverlayImg(this)">
+    <div class="settings-grid">
+      <div>
+        <label class="lbl">卖点文字（每行一个）</label>
+        <textarea class="inp" rows="4" id="ovBullets" placeholder="防水IPX7&#10;超长续航30天&#10;一键操控"></textarea>
+        <div style="margin-top:9px">
+          <label class="lbl">卖点位置</label>
+          <div class="ratio-row" style="gap:5px">
+            <label class="radio-chip"><input type="radio" name="ovPos" value="top">top</label>
+            <label class="radio-chip"><input type="radio" name="ovPos" value="bottom" checked>bottom</label>
+            <label class="radio-chip"><input type="radio" name="ovPos" value="left">left</label>
+            <label class="radio-chip"><input type="radio" name="ovPos" value="right">right</label>
+          </div>
+        </div>
+        <div style="margin-top:9px" class="range-row">
+          <label class="lbl">字体大小：<span id="ovFontVal">28</span>px</label>
+          <input type="range" min="12" max="72" value="28" oninput="document.getElementById('ovFontVal').textContent=this.value">
+        </div>
+      </div>
+      <div>
+        <label class="lbl">功能标注（格式：文字,x%,y%）</label>
+        <textarea class="inp" rows="4" id="ovAnnotations" placeholder="防水,20,30&#10;轻量化,80,30&#10;大容量,50,70"></textarea>
+        <div style="margin-top:9px">
+          <label class="lbl">标注样式</label>
+          <div class="ratio-row" style="gap:5px">
+            <label class="radio-chip"><input type="radio" name="ovStyle" value="rect" checked>方形</label>
+            <label class="radio-chip"><input type="radio" name="ovStyle" value="circle">圆形</label>
+            <label class="radio-chip"><input type="radio" name="ovStyle" value="arrow">箭头</label>
+          </div>
+        </div>
+        <div style="margin-top:9px" class="range-row">
+          <label class="lbl">背景透明度：<span id="ovAlphaVal">0.7</span></label>
+          <input type="range" min="0" max="100" value="70" oninput="document.getElementById('ovAlphaVal').textContent=(this.value/100).toFixed(1)">
+        </div>
+        <div style="margin-top:9px">
+          <label class="lbl">文字颜色</label>
+          <div class="ratio-row" style="gap:5px">
+            <label class="radio-chip"><input type="radio" name="ovColor" value="white" checked>白色</label>
+            <label class="radio-chip"><input type="radio" name="ovColor" value="black">黑色</label>
+            <label class="radio-chip"><input type="radio" name="ovColor" value="#2563eb">品牌蓝</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-violet" onclick="applyOverlay()">🎨 应用文字叠加</button>
+    <div style="font-weight:700;font-size:12px;margin:14px 0 8px">叠加结果</div>
+    <div class="result-canvas-wrap" id="canvasWrap">
+      <canvas id="overlayCanvas" style="display:none"></canvas>
+      <div id="canvasPlaceholder" style="text-align:center;color:var(--text3);font-size:12px;padding:40px">
+        <div style="font-size:32px;margin-bottom:8px">🎨</div>
+        上传图片并点击应用后<br>结果将显示在这里
+      </div>
+    </div>
+    <div id="overlayDownloadBtn" style="display:none;margin-top:10px">
+      <button class="btn btn-dark" onclick="downloadOverlayResult()">⬇ 下载叠加结果</button>
+    </div>`;
+}
+
+function handleOverlayDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) {
+    const fakeIn = { files: [f] };
+    loadOverlayImg(fakeIn);
+  }
+}
+
+function loadOverlayImg(input) {
+  const f = input.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    overlayImg = new Image();
+    overlayImg.onload = () => {
+      const dz = document.getElementById('dropZone');
+      dz.style.height = '80px';
+      dz.innerHTML = `<img src="${e.target.result}" style="max-height:70px;max-width:100%;border-radius:6px;object-fit:contain"><div style="font-size:10px;margin-top:3px">${f.name}</div>`;
+      showToast('图片已加载，点击「应用文字叠加」', 'info');
+    };
+    overlayImg.src = e.target.result;
+  };
+  reader.readAsDataURL(f);
+}
+
+function applyOverlay() {
+  if (!overlayImg) { showToast('请先上传图片', 'error'); return; }
+  const canvas = document.getElementById('overlayCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = overlayImg.width;
+  canvas.height = overlayImg.height;
+  ctx.drawImage(overlayImg, 0, 0);
+
+  const bullets = document.getElementById('ovBullets').value.trim().split('\n').filter(Boolean);
+  const fontSize = parseInt(document.querySelector('input[oninput*="ovFontVal"]').value);
+  const pos = document.querySelector('input[name="ovPos"]:checked')?.value || 'bottom';
+  const txtColor = document.querySelector('input[name="ovColor"]:checked')?.value || 'white';
+  const alpha = parseFloat(document.querySelector('input[oninput*="ovAlphaVal"]').value) / 100;
+
+  if (bullets.length) {
+    ctx.font = `bold ${fontSize}px Plus Jakarta Sans, sans-serif`;
+    ctx.textBaseline = 'middle';
+    const pad = 16;
+    const lineH = fontSize * 1.5;
+    const totalH = lineH * bullets.length + pad * 2;
+    let startY = pos === 'bottom' ? canvas.height - totalH : pos === 'top' ? 0 : (canvas.height - totalH) / 2;
+    ctx.fillStyle = `rgba(0,0,0,${alpha})`;
+    ctx.fillRect(0, startY, canvas.width, totalH);
+    bullets.forEach((b, i) => {
+      const y = startY + pad + i * lineH + lineH / 2;
+      ctx.fillStyle = txtColor === 'white' ? '#ffffff' : txtColor === 'black' ? '#000000' : '#2563eb';
+      ctx.fillText('• ' + b, pad, y);
+    });
+  }
+
+  // Annotations
+  const annos = document.getElementById('ovAnnotations').value.trim().split('\n').filter(Boolean);
+  const annoStyle = document.querySelector('input[name="ovStyle"]:checked')?.value || 'rect';
+  annos.forEach(a => {
+    const parts = a.split(',');
+    if (parts.length < 3) return;
+    const [text, xpct, ypct] = parts;
+    const x = canvas.width * parseFloat(xpct) / 100;
+    const y = canvas.height * parseFloat(ypct) / 100;
+    ctx.font = `bold ${fontSize * 0.7}px Plus Jakarta Sans, sans-serif`;
+    const tw = ctx.measureText(text).width;
+    const ph = fontSize * 0.8;
+    const pw = tw + 16;
+    ctx.fillStyle = `rgba(37,99,235,${alpha + 0.1})`;
+    if (annoStyle === 'circle') {
+      ctx.beginPath();
+      ctx.arc(x, y, Math.max(pw, ph) / 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      const r = 6;
+      ctx.beginPath();
+      ctx.moveTo(x - pw/2 + r, y - ph/2);
+      ctx.lineTo(x + pw/2 - r, y - ph/2);
+      ctx.arcTo(x + pw/2, y - ph/2, x + pw/2, y - ph/2 + r, r);
+      ctx.lineTo(x + pw/2, y + ph/2 - r);
+      ctx.arcTo(x + pw/2, y + ph/2, x + pw/2 - r, y + ph/2, r);
+      ctx.lineTo(x - pw/2 + r, y + ph/2);
+      ctx.arcTo(x - pw/2, y + ph/2, x - pw/2, y + ph/2 - r, r);
+      ctx.lineTo(x - pw/2, y - ph/2 + r);
+      ctx.arcTo(x - pw/2, y - ph/2, x - pw/2 + r, y - ph/2, r);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.fillStyle = 'white';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, x - tw/2, y);
+  });
+
+  canvas.style.display = 'block';
+  document.getElementById('canvasPlaceholder').style.display = 'none';
+  document.getElementById('overlayDownloadBtn').style.display = 'block';
+  showToast('✓ 文字叠加已应用', 'success');
+}
+
+function downloadOverlayResult() {
+  const canvas = document.getElementById('overlayCanvas');
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = 'overlay-result.png';
+  a.click();
+}
+
+// ╔══════════════════════════════════════╗
+// ║        BRAND TAB                    ║
+// ╚══════════════════════════════════════╝
+function renderBrand(el) {
+  const current = BRANDS.find(b => b.id === S.brandStyle) || BRANDS[2];
+  const cards = BRANDS.map(b => `
+    <div class="style-card ${S.brandStyle===b.id?'sel':''}" onclick="selectBrand('${b.id}')">
+      <div class="swatch-row">${b.colors.map(c=>`<div class="swatch" style="background:${c}"></div>`).join('')}</div>
+      <div class="style-info">
+        <div class="name">${b.name}</div>
+        <div class="sub">${b.sub}</div>
+      </div>
+    </div>`).join('');
+
+  const promptText = `[Brand Visual Guidelines — ${current.sub}]
+Photography: ${current.sub} style, premium product photography
+Color palette: ${current.colors.join(', ')}
+Brand personality: Professional, ${current.name}, Premium
+Visual feel: Clean, polished, high-end e-commerce photography
+DO NOT: No messy backgrounds; no overly artistic/abstract styling; maintain brand consistency`;
+
+  el.innerHTML = `
+    <div class="brand-intro">选择或导入品牌视觉风格，生成图片时将自动应用配色、摄影风格、品牌调性。</div>
+    <div style="font-weight:700;font-size:12px;margin-bottom:9px">快速选择风格预设</div>
+    <div class="style-grid">${cards}</div>
+    <div class="active-style-badge">✓ 已应用「${current.name} · ${current.sub}」风格</div>
+    <div style="margin-bottom:14px">
+      <div style="font-weight:700;font-size:12px;margin-bottom:7px">自定义导入品牌指南 PDF</div>
+      <div class="upload-pdf-grid">
+        <div class="upload-zone" onclick="document.getElementById('brandPdfIn').click()">
+          <div style="font-size:20px">📄</div>
+          <div>上传品牌指南 PDF</div>
+        </div>
+        <button class="btn btn-teal" onclick="showToast('PDF解析需连接后端API','info')">🔍 解析品牌指南</button>
+      </div>
+      <input type="file" id="brandPdfIn" accept=".pdf" style="display:none">
+    </div>
+    <div style="font-weight:700;font-size:12px;margin-bottom:7px">当前品牌风格指令（可编辑）</div>
+    <textarea class="brand-textarea" id="brandPromptTxt" rows="7">${promptText}</textarea>
+    <div style="font-weight:700;font-size:12px;margin:12px 0 6px">品牌 Profile JSON（高级）</div>
+    <textarea class="json-edit" id="brandJson" placeholder='{"brand_name":"","primary_color":"","style":"","do_not":""}'>${JSON.stringify({brand_name:current.sub,primary_colors:current.colors,style:current.name},null,2)}</textarea>`;
+}
+
+function selectBrand(id) {
+  S.brandStyle = id;
+  localStorage.setItem('alc_brand', id);
+  renderBrand(document.getElementById('tabBody'));
+  showToast(`✓ 已应用品牌风格：${BRANDS.find(b=>b.id===id)?.name}`, 'success');
+}
+
+// ╔══════════════════════════════════════╗
+// ║        SETTINGS TAB                 ║
+// ╚══════════════════════════════════════╝
+function renderSettings(el) {
+  const hasKey = !!S.apiKey;
+  el.innerHTML = `
+    <div class="settings-card">
+      <h3>🔑 API 配置</h3>
+      <div class="settings-field">
+        <label>Gemini API Key</label>
+        <input type="password" class="inp" id="apiKeyIn" value="${S.apiKey}" placeholder="AIza...（留空则使用服务端环境变量）">
+        <div class="settings-hint">API Key 可在 <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> 免费获取</div>
+        <div class="api-status ${hasKey?'ok':'none'}">
+          ${hasKey ? '✓ API Key 已配置' : '○ 未配置（需输入 Key 或部署时在 Vercel 设置环境变量 GEMINI_API_KEY）'}
+        </div>
+      </div>
+      <div class="settings-field">
+        <label>文字/分析模型</label>
+        <select class="inp" id="modelIn">
+          <option value="gemini-2.5-flash-preview-04-17" ${S.model==='gemini-2.5-flash-preview-04-17'?'selected':''}>gemini-2.5-flash-preview-04-17（推荐 ⭐）</option>
+          <option value="gemini-2.0-flash-exp" ${S.model==='gemini-2.0-flash-exp'?'selected':''}>gemini-2.0-flash-exp</option>
+          <option value="gemini-1.5-pro" ${S.model==='gemini-1.5-pro'?'selected':''}>gemini-1.5-pro（高质量）</option>
+          <option value="gemini-1.5-flash" ${S.model==='gemini-1.5-flash'?'selected':''}>gemini-1.5-flash（快速）</option>
+        </select>
+      </div>
+      <div class="settings-field">
+        <label>图片生成模型</label>
+        <select class="inp" id="imgModelIn">
+          <option value="gemini-2.0-flash-exp-image-generation">gemini-2.0-flash-exp-image-generation（推荐）</option>
+          <option value="imagen-3.0-generate-002">imagen-3.0-generate-002（高质量，需升级套餐）</option>
+        </select>
+        <div class="settings-hint">图片生成使用 Gemini Imagen 模型。建议使用默认模型。</div>
+      </div>
+      <button class="btn btn-blue" onclick="saveSettings()">💾 保存配置</button>
+    </div>
+    <div class="settings-card">
+      <h3>ℹ️ 使用说明</h3>
+      <div style="font-size:12px;color:var(--text2);line-height:2">
+        <div>1. 在上方输入 Gemini API Key 并保存</div>
+        <div>2. 上传产品图片（支持多张）</div>
+        <div>3. 点击「AI提取产品特征」自动分析</div>
+        <div>4. 点击「全部生成」获取完整文案</div>
+        <div>5. 生成组图 Prompt 后批量生成图片</div>
+        <div>6. 可在品牌风格中选择摄影风格</div>
+        <div>7. 使用文字叠加功能添加卖点标注</div>
+      </div>
+    </div>
+    <div class="settings-card">
+      <h3>🚀 部署说明</h3>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8">
+        <div><strong>Vercel 部署：</strong>将 GEMINI_API_KEY 添加到 Vercel 环境变量中，用户无需自己输入 Key。</div>
+        <div style="margin-top:8px"><strong>本地运行：</strong>在 .env 文件中设置 <code style="background:#f1f5f9;padding:1px 5px;border-radius:3px">GEMINI_API_KEY=your_key</code></div>
+      </div>
+    </div>`;
+}
+
+function saveSettings() {
+  S.apiKey = document.getElementById('apiKeyIn').value.trim();
+  S.model = document.getElementById('modelIn').value;
+  localStorage.setItem('alc_apikey', S.apiKey);
+  localStorage.setItem('alc_model', S.model);
+  renderSettings(document.getElementById('tabBody'));
+  showToast('✓ 配置已保存', 'success');
+}
+
+// ╔══════════════════════════════════════╗
+// ║        CORE ACTIONS                 ║
+// ╚══════════════════════════════════════╝
+
+// --- Upload ---
+function handleImageUpload(input) {
+  Array.from(input.files).forEach(f => {
+    if (S.images.find(i => i.name === f.name)) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      S.images.push({ name: f.name, size: f.size, data: e.target.result, file: f });
+      renderFileList();
+      if (S.images.length === 1) {
+        const z = document.getElementById('uploadZone');
+        z.classList.add('filled');
+        z.innerHTML = `<img src="${e.target.result}" alt="preview">`;
+      }
+    };
+    reader.readAsDataURL(f);
+  });
+  input.value = '';
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag');
+  handleImageUpload({ files: e.dataTransfer.files });
+}
+
+function renderFileList() {
+  document.getElementById('fileList').innerHTML = S.images.map((f,i) => `
+    <div class="file-tag">
+      <span>📷 ${f.name} <span style="color:var(--text3)">${(f.size/1024).toFixed(1)}KB</span></span>
+      <span class="rm" onclick="removeImg(${i})">×</span>
+    </div>`).join('');
+}
+
+function removeImg(i) {
+  S.images.splice(i, 1);
+  renderFileList();
+  if (!S.images.length) {
+    const z = document.getElementById('uploadZone');
+    z.classList.remove('filled');
+    z.innerHTML = `<div style="font-size:22px">📷</div><div style="font-size:11px;line-height:1.5">拖拽或点击上传产品主图<br><span style="color:var(--text3)">（支持多张）</span></div>`;
+  }
+}
+
+// --- AI Extract ---
+async function aiExtract() {
+  const title = document.getElementById('productTitle').value;
+  const desc = document.getElementById('productDesc').value;
+  if (!S.images.length && !title && !desc) {
+    showToast('请先上传图片或输入产品信息', 'error'); return;
+  }
+  showLoading('🤖 AI 分析产品中...', '正在提取产品特征和市场定位');
+  try {
+    const parts = [];
+    if (S.images.length) {
+      const img = S.images[0];
+      const base64 = img.data.split(',')[1];
+      const mime = img.data.match(/data:([^;]+)/)?.[1] || 'image/jpeg';
+      parts.push({ inlineData: { mimeType: mime, data: base64 } });
+    }
+    parts.push({ text: `分析这个产品${S.images.length?'（含图片）':''}。
+${title ? `产品标题: ${title}` : ''}
+${desc ? `产品描述: ${desc}` : ''}
+
+请返回JSON格式的产品深度分析：
+{
+  "product_name": "产品完整名称",
+  "category": "产品类别 / 子类别",
+  "features": ["特征1","特征2","特征3","特征4","特征5","特征6"],
+  "selling_points": ["卖点1","卖点2","卖点3","卖点4","卖点5"],
+  "target_audience": "目标人群描述",
+  "colors": ["颜色1","颜色2"],
+  "materials": "材质信息",
+  "use_cases": ["使用场景1","使用场景2","使用场景3"],
+  "keywords": ["关键词1","关键词2","关键词3","关键词4","关键词5"]
+}
+只返回有效JSON，不要任何markdown格式或额外文字。` });
+
+    const resp = await callGeminiText(parts);
+    const clean = resp.replace(/```json|```/g, '').trim();
+    const data = JSON.parse(clean);
+    S.analysis = data;
+
+    document.getElementById('analysisSummary').innerHTML = `
+      <div style="margin-bottom:8px;font-weight:700;font-size:12px">${data.product_name||''}</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px">${data.category||''}</div>
+      <div style="margin-bottom:5px;font-size:10px;font-weight:700;color:var(--text2)">产品特征</div>
+      <div style="margin-bottom:8px">${(data.features||[]).map(f=>`<span class="atag">${f}</span>`).join('')}</div>
+      <div style="margin-bottom:5px;font-size:10px;font-weight:700;color:var(--text2)">核心卖点</div>
+      <div style="margin-bottom:8px">${(data.selling_points||[]).map(s=>`<span class="atag green">${s}</span>`).join('')}</div>
+      <div style="margin-bottom:5px;font-size:10px;font-weight:700;color:var(--text2)">目标人群</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px">${data.target_audience||''}</div>
+      <div style="margin-bottom:5px;font-size:10px;font-weight:700;color:var(--text2)">SEO 关键词</div>
+      <div>${(data.keywords||[]).map(k=>`<span class="atag orange">${k}</span>`).join('')}</div>`;
+
+    document.getElementById('analysisJson').value = JSON.stringify(data, null, 2);
+    if (data.product_name && !S.productTitle) {
+      document.getElementById('productTitle').value = data.product_name;
+      S.productTitle = data.product_name;
+    }
+    hideLoading();
+    showToast('✓ 产品特征提取成功', 'success');
+  } catch(e) {
+    hideLoading();
+    showToast('提取失败: ' + e.message, 'error');
+    console.error(e);
+  }
+}
+
+// --- Generate Copy ---
+async function generateCopy() {
+  const title = document.getElementById('productTitle').value || S.productTitle;
+  const desc = document.getElementById('productDesc').value || S.productDesc;
+  if (!title && !desc && !S.analysis) {
+    showToast('请先输入产品信息', 'error'); return;
+  }
+  showLoading('✍️ 正在生成文案...', 'AI 正在撰写完整 Listing 文案');
+  try {
+    const platform = document.getElementById('platform').value;
+    const analysis = S.analysis ? JSON.stringify(S.analysis) : '';
+    const prompt = `你是专业的${platform}电商文案专家。
+
+产品标题：${title}
+产品描述：${desc}
+${analysis ? `产品分析数据：${analysis}` : ''}
+目标平台：${platform}
+
+请生成完整专业的Listing文案，返回JSON：
+{
+  "title": "优化的产品标题（含核心关键词，200字符内，英文）",
+  "optimizedTitle": "进一步SEO优化标题（含更多长尾词）",
+  "bullets": [
+    "**Eco-Luxury & Sustainable:** 描述（英文，加粗特性名称）",
+    "**Gentle Yet Powerful Exfoliation:** 描述",
+    "**Boosts Circulation & Energy:** 描述",
+    "**Spa-Like Ritual at Home:** 描述",
+    "**Ergonomic Design for Easy Use:** 描述"
+  ],
+  "description": "详细产品描述（中文，300-500字，生动有感染力，包含产品故事和使用场景，突出核心价值）"
+}
+
+bullets 必须5条，每条以**特性:** 开头（英文加粗），后跟英文描述。description 用中文。只返回JSON。`;
+
+    const resp = await callGeminiText([{ text: prompt }]);
+    const clean = resp.replace(/```json|```/g, '').trim();
+    S.copyResult = JSON.parse(clean);
+    hideLoading();
+    switchTab('copy');
+    showToast('✓ 文案生成成功', 'success');
+  } catch(e) {
+    hideLoading();
+    showToast('生成失败: ' + e.message, 'error');
+    console.error(e);
+  }
+}
+
+// --- Generate Prompts ---
+async function generatePrompts() {
+  const title = S.copyResult?.optimizedTitle || document.getElementById('productTitle').value || '产品';
+  showLoading('🎨 生成组图 Prompt...', 'AI 正在规划专业产品摄影方案');
+  try {
+    const brand = BRANDS.find(b => b.id === S.brandStyle);
+    const styleStr = brand ? `\nBrand style: ${brand.sub}, Color palette: ${brand.colors.join(', ')}` : '';
+    const analysis = S.analysis ? `\nProduct features: ${S.analysis.features?.join(', ')}` : '';
+
+    const prompt = `为产品"${title}"生成专业电商摄影场景提示词（英文）。${styleStr}${analysis}
+
+返回JSON数组，8个场景，每个含label和text：
+[
+  {"label":"Main 1 main (1:1)","text":"..."},
+  {"label":"Main 2 main (1:1)","text":"..."},
+  {"label":"Aplus 1 secondary (21:9)","text":"..."},
+  {"label":"Aplus 2 secondary (21:9)","text":"..."},
+  {"label":"Aplus 3 secondary (21:9)","text":"..."},
+  {"label":"Aplus 4 secondary (21:9)","text":"..."},
+  {"label":"Lifestyle 1 (16:9)","text":"..."},
+  {"label":"Lifestyle 2 (16:9)","text":"..."}
+]
+
+每个text需包含：背景设计、光线类型、产品摆放、场景道具、色调氛围。
+只返回JSON数组，不含任何其他文字。`;
+
+    const resp = await callGeminiText([{ text: prompt }]);
+    const clean = resp.replace(/```json|```/g, '').trim();
+    S.prompts = JSON.parse(clean);
+    S.selectedPrompts = new Set(S.prompts.map((_,i) => i));
+    hideLoading();
+    switchTab('prompt');
+    showToast('✓ 组图 Prompt 生成成功', 'success');
+  } catch(e) {
+    hideLoading();
+    showToast('生成失败: ' + e.message, 'error');
+  }
+}
+
+// --- Generate Images ---
+async function generateSelectedImages() {
+  const selected = S.selectedPrompts.size ? [...S.selectedPrompts].map(i => S.prompts[i]) : S.prompts;
+  await doGenerateImages(selected);
+}
+
+async function batchGenImages() {
+  if (!S.prompts.length) { showToast('请先生成组图 Prompt', 'error'); return; }
+  await doGenerateImages(S.prompts);
+}
+
+async function doGenerateImages(prompts) {
+  if (!prompts.length) return;
+  if (!S.apiKey) { showToast('请在设置中配置 API Key', 'error'); switchTab('settings'); return; }
+  S.generatedImages = [];
+  switchTab('images');
+  showLoading(`🖼️ 批量生成图片中...`, `共 ${prompts.length} 张，请耐心等待`);
+
+  for (let i = 0; i < prompts.length; i++) {
+    const p = prompts[i];
+    setProgress(Math.round(i / prompts.length * 100));
+    document.getElementById('modalDesc').textContent = `正在生成 ${i+1}/${prompts.length}: ${p.label}`;
+    try {
+      const url = await generateOneImage(p.text);
+      S.generatedImages.push({ label: p.label, url });
+    } catch(e) {
+      S.generatedImages.push({ label: p.label, url: '', error: e.message });
+    }
+    renderImages(document.getElementById('tabBody'));
+  }
+  setProgress(100);
+  hideLoading();
+  const ok = S.generatedImages.filter(g => g.url).length;
+  showToast(`✓ 已生成 ${ok}/${prompts.length} 张图片`, ok === prompts.length ? 'success' : 'info');
+}
+
+async function generateOneImage(promptText) {
+  const imageModel = 'gemini-2.0-flash-exp-image-generation';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:generateContent?key=${S.apiKey}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: promptText + '\n\nCreate a professional, high-quality e-commerce product photography image. Make it photorealistic, well-lit, and suitable for Amazon listing.' }] }],
+      generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || `HTTP ${res.status}`);
+  }
+  const data = await res.json();
+  const imgPart = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+  if (!imgPart) throw new Error('No image returned');
+  return `data:${imgPart.inlineData.mimeType};base64,${imgPart.inlineData.data}`;
+}
+
+// --- One-click all ---
+async function generateAll() {
+  await aiExtract();
+  await generateCopy();
+  await generatePrompts();
+}
+
+// --- Gemini Text API ---
+async function callGeminiText(parts) {
+  if (!S.apiKey) throw new Error('请在设置页面配置 Gemini API Key');
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${S.model}:generateContent?key=${S.apiKey}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 8192 }
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || `HTTP ${res.status}`);
+  }
+  const data = await res.json();
+  return data.candidates?.[0]?.content?.parts?.find(p => p.text)?.text || '';
+}
+
+// ╔══════════════════════════════════════╗
+// ║        UI HELPERS                   ║
+// ╚══════════════════════════════════════╝
+function showLoading(title, desc) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalDesc').textContent = desc;
+  document.getElementById('progressFill').style.width = '5%';
+  document.getElementById('loadingModal').classList.add('show');
+}
+function hideLoading() { document.getElementById('loadingModal').classList.remove('show'); }
+function setProgress(p) { document.getElementById('progressFill').style.width = p + '%'; }
+
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type}`;
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('imgLightbox').classList.add('show');
+}
+
+function copyText(id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.textContent).then(() => showToast('✓ 已复制', 'success'));
+}
+
+function copyBullets() {
+  const items = document.querySelectorAll('#bulletContainer .bullet-li span[contenteditable]');
+  const text = Array.from(items).map(el => '• ' + el.textContent).join('\n');
+  navigator.clipboard.writeText(text).then(() => showToast('✓ 卖点已复制', 'success'));
+}
+
+function copyAllCopy() {
+  const title = document.getElementById('copyTitleEl')?.textContent || '';
+  const opt = document.getElementById('copyOptEl')?.textContent || '';
+  const bullets = Array.from(document.querySelectorAll('#bulletContainer .bullet-li span[contenteditable]')).map(el => '• ' + el.textContent).join('\n');
+  const desc = document.getElementById('copyDescEl')?.textContent || '';
+  navigator.clipboard.writeText(`标题:\n${title}\n\n优化标题:\n${opt}\n\n五行卖点:\n${bullets}\n\n产品描述:\n${desc}`)
+    .then(() => showToast('✓ 全部文案已复制', 'success'));
+}
+
+function downloadImg(src, label) {
+  const a = document.createElement('a');
+  a.href = src;
+  a.download = label.replace(/[^a-z0-9]/gi, '_') + '.png';
+  a.click();
+}
+
+function saveAllImages() {
+  S.generatedImages.filter(g => g.url).forEach(g => downloadImg(g.url, g.label));
+  showToast(`⬇ 开始下载 ${S.generatedImages.filter(g=>g.url).length} 张图片`, 'success');
+}
+
+// ╔══════════════════════════════════════╗
+// ║        INIT                         ║
+// ╚══════════════════════════════════════╝
+document.addEventListener('DOMContentLoaded', () => {
+  renderTab('copy');
+  // Keyboard shortcut: Esc closes lightbox
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.getElementById('imgLightbox').classList.remove('show');
+  });
+});
+</script>
+</body>
+</html>
