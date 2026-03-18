@@ -2754,7 +2754,7 @@ COSMO 通过两种用户行为挖掘意图：
   }
 }
 
-只返回JSON对象，不要任何markdown或额外说明。所有数组至少3个元素，内容要具体针对这个产品，image_plan中的每个prompt必须是完整的、可直接用于AI图片生成的英文提示词（100-200字）。
+只返回JSON对象，不要任何markdown或额外说明。所有数组至少3个元素，内容要具体针对这个产品，image_plan中的每个prompt必须是完整的、可直接用于AI图片生成的英文提示词（100-200字）。`;
 
     const resp = await callGeminiText([{ text: prompt }]);
     const jsonMatch = resp.match(/\{[\s\S]*\}/);
