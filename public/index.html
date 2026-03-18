@@ -256,6 +256,75 @@ select.inp{cursor:pointer}
 /* ── DIVIDER ── */
 .divider{height:1px;background:var(--border);margin:2px 0}
 
+/* ── COSMO ANALYSIS ── */
+.cosmo-hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 50%,#312e81 100%);color:white;border-radius:12px;padding:18px;margin-bottom:16px;position:relative;overflow:hidden}
+.cosmo-hero::before{content:'🧠';position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:52px;opacity:.15}
+.cosmo-hero h3{font-size:16px;font-weight:800;margin-bottom:5px;display:flex;align-items:center;gap:8px}
+.cosmo-hero p{font-size:12px;opacity:.8;line-height:1.6;max-width:480px}
+.cosmo-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.15);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;margin-bottom:10px;letter-spacing:.5px}
+.cosmo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.cosmo-rel-card{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--sh)}
+.cosmo-rel-head{padding:9px 13px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--border)}
+.cosmo-rel-icon{font-size:16px;flex-shrink:0}
+.cosmo-rel-title{font-weight:700;font-size:12px;flex:1}
+.cosmo-rel-type{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:#f1f5f9;color:var(--text2);font-family:'JetBrains Mono',monospace}
+.cosmo-rel-body{padding:10px 13px}
+.cosmo-tag{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:500;margin:2px 2px 2px 0;cursor:default;transition:transform .1s}
+.cosmo-tag:hover{transform:translateY(-1px)}
+.cosmo-tag-func{background:#dbeafe;color:#1e40af}
+.cosmo-tag-eve{background:#dcfce7;color:#166534}
+.cosmo-tag-aud{background:#f3e8ff;color:#6b21a8}
+.cosmo-tag-cap{background:#fef3c7;color:#92400e}
+.cosmo-tag-loc{background:#fee2e2;color:#991b1b}
+.cosmo-tag-body{background:#fce7f3;color:#9d174d}
+.cosmo-tag-comp{background:#e0f2fe;color:#0369a1}
+.cosmo-tag-time{background:#f0fdf4;color:#15803d}
+.cosmo-tag-int{background:#fdf4ff;color:#7e22ce}
+.cosmo-tag-want{background:#fff7ed;color:#c2410c}
+.cosmo-empty{color:var(--text3);font-size:11px;font-style:italic;padding:4px 0}
+.cosmo-insight-card{background:white;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:var(--sh)}
+.cosmo-insight-title{font-weight:800;font-size:13px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.cosmo-score-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.cosmo-score-label{font-size:11px;color:var(--text2);width:100px;flex-shrink:0}
+.cosmo-score-bar{flex:1;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden}
+.cosmo-score-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+.cosmo-score-val{font-size:11px;font-weight:700;width:36px;text-align:right;flex-shrink:0}
+.cosmo-behavior-card{background:#f8fafc;border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:8px}
+.cosmo-behavior-head{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.cosmo-kv-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:5px;font-size:12px}
+.cosmo-kv-key{color:var(--text3);font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;min-width:100px;flex-shrink:0;margin-top:2px}
+.cosmo-kv-val{color:var(--text);flex:1;line-height:1.5}
+.cosmo-copy-strategy{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #bbf7d0;border-radius:10px;padding:14px;margin-bottom:12px}
+.cosmo-copy-strategy h4{font-size:13px;font-weight:800;color:#166534;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.cosmo-strategy-item{display:flex;gap:8px;margin-bottom:6px;font-size:12px;line-height:1.5}
+.cosmo-strategy-num{width:18px;height:18px;background:#166534;color:white;border-radius:50%;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.cosmo-run-btn{background:linear-gradient(135deg,#2563eb,#7c3aed);color:white;border:none;border-radius:9px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;font-family:inherit;width:100%;justify-content:center;margin-bottom:16px}
+.cosmo-run-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(37,99,235,.3)}
+.cosmo-run-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.cosmo-relation-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:white;border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:14px;box-shadow:var(--sh)}
+.cosmo-legend-item{display:flex;align-items:center;gap:6px;font-size:11px}
+.cosmo-legend-code{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;flex-shrink:0}
+.cosmo-tabs{display:flex;gap:0;background:#f1f5f9;border-radius:8px;padding:3px;margin-bottom:14px}
+.cosmo-subtab{flex:1;padding:6px 8px;text-align:center;font-size:11px;font-weight:600;cursor:pointer;border-radius:6px;color:var(--text2);transition:all .15s}
+.cosmo-subtab.active{background:white;color:var(--primary);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+/* ── COSMO IMAGE PLAN ── */
+.cosmo-img-plan-card{border:1px solid var(--border);border-radius:9px;margin-bottom:10px;overflow:hidden;background:white;transition:box-shadow .15s}
+.cosmo-img-plan-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.cosmo-img-plan-head{display:flex;align-items:center;gap:9px;padding:10px 13px;background:#f8fafc;border-bottom:1px solid var(--border)}
+.cosmo-img-plan-num{width:36px;height:36px;background:linear-gradient(135deg,#2563eb,#0d9488);color:white;border-radius:8px;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-.3px}
+.cosmo-img-ratio-badge{padding:3px 8px;background:#dbeafe;color:#1e40af;border-radius:5px;font-size:10px;font-weight:700;flex-shrink:0}
+.cosmo-img-plan-body{padding:11px 13px}
+.cosmo-img-plan-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px}
+.cosmo-img-plan-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.cosmo-img-plan-meta span{font-size:10px;color:var(--text3);background:#f8fafc;padding:2px 7px;border-radius:4px}
+.cosmo-img-prompt-box{background:#0f172a;color:#a5f3fc;padding:9px 11px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.55;max-height:80px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;cursor:text}
+.cosmo-gen-btn{background:linear-gradient(135deg,#2563eb,#0d9488);color:white;border:none;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;transition:all .15s}
+.cosmo-gen-btn:hover{opacity:.9;transform:translateY(-1px)}
+.cosmo-gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.cosmo-copy-prompt-btn{background:white;border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.cosmo-copy-prompt-btn:hover{background:var(--bg);color:var(--text)}
+
 /* ── BATCH IMPORT ── */
 .batch-intro{background:linear-gradient(135deg,#0f172a,#1e3a8a);color:white;border-radius:10px;padding:16px;margin-bottom:16px}
 .batch-intro h3{font-size:15px;font-weight:800;margin-bottom:5px}
@@ -425,6 +494,7 @@ select.inp{cursor:pointer}
     <nav class="tabs">
       <div class="tab active" onclick="switchTab('copy')" data-tab="copy">📄 文案结果</div>
       <div class="tab" onclick="switchTab('batch')" data-tab="batch">📊 批量导入</div>
+      <div class="tab" onclick="switchTab('cosmo')" data-tab="cosmo">🧠 COSMO意图分析</div>
       <div class="tab" onclick="switchTab('prompt')" data-tab="prompt">🎨 组图Prompt</div>
       <div class="tab" onclick="switchTab('images')" data-tab="images">🖼️ 生成的图片</div>
       <div class="tab" onclick="switchTab('aplus')" data-tab="aplus">✨ A+图片</div>
@@ -525,7 +595,7 @@ function switchTab(tab) {
 }
 function renderTab(t) {
   const el = document.getElementById('tabBody');
-  ({copy:renderCopy, batch:renderBatch, prompt:renderPrompt, images:renderImages, aplus:renderAplus,
+  ({copy:renderCopy, batch:renderBatch, cosmo:renderCosmo, prompt:renderPrompt, images:renderImages, aplus:renderAplus,
     overlay:renderOverlay, brand:renderBrand, settings:renderSettings}[t] || renderCopy)(el);
 }
 
@@ -1274,13 +1344,22 @@ async function generateCopy() {
   try {
     const platform = document.getElementById('platform').value;
     const analysis = S.analysis ? JSON.stringify(S.analysis) : '';
-    const prompt = `你是专业的${platform}电商文案专家。
+    const cosmoHint = CS.result ? `
+## COSMO 意图分析增强（请重点参考）
+- 用户深层意图(xWant)：${(CS.result.relations?.xWant||[]).join('、')}
+- 用户身份(xIs_a)：${(CS.result.relations?.xIs_a||[]).join('、')}
+- 高转化搜索词：${(CS.result.search_buy?.high_conversion_queries||[]).join('、')}
+- 互补共购品：${(CS.result.co_buy?.complementary_products||[]).join('、')}
+- 文案策略：${(CS.result.copy_strategy?.strategies||[]).slice(0,3).join('；')}
+- 建议标题：${CS.result.copy_strategy?.suggested_title||''}` : '';
+    const prompt = `你是专业的${platform}电商文案专家。${cosmoHint ? '\n\n' + cosmoHint : ''}
 
 产品标题：${title}
 产品描述：${desc}
 ${analysis ? `产品分析数据：${analysis}` : ''}
 目标平台：${platform}
 
+${cosmoHint ? '请充分利用以上 COSMO 意图分析数据，特别是用户深层意图和高转化词，生成更精准有力的文案。' : ''}
 请生成完整专业的Listing文案，返回JSON：
 {
   "title": "优化的产品标题（含核心关键词，200字符内，英文）",
@@ -2017,6 +2096,733 @@ function exportCsv(full = false) {
   a.download = `listing_results_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
   showToast(`✓ 已导出 ${done.length} 条结果`, 'success');
+}
+
+// ╔══════════════════════════════════════╗
+// ║     COSMO INTENT ANALYSIS           ║
+// ║  Based on Amazon COSMO paper        ║
+// ║  SIGMOD-Companion '24               ║
+// ╚══════════════════════════════════════╝
+
+// COSMO 15 relation types (Table 2 in paper)
+const COSMO_RELATIONS = [
+  { id:'used_for_func',  label:'used_for_func',  name:'功能用途',     desc:'产品的核心功能和使用目的',           color:'func',  icon:'⚙️',  example:'dry face / hold snacks' },
+  { id:'used_for_eve',   label:'used_for_eve',   name:'使用场景事件', desc:'适用的活动或生活事件',               color:'eve',   icon:'🎉',  example:'walk the dog / wedding party' },
+  { id:'used_for_aud',   label:'used_for_aud',   name:'目标受众',     desc:'产品面向的用户群体',                 color:'aud',   icon:'👥',  example:'daycare worker / cat owner' },
+  { id:'capable_of',     label:'capable_of',     name:'产品能力',     desc:'产品能做到的事情',                   color:'cap',   icon:'💪',  example:'hold snacks / provide protection' },
+  { id:'used_to',        label:'used_to',        name:'使用目的',     desc:'用户购买/使用的目的',                color:'func',  icon:'🎯',  example:'build a fence / track calories' },
+  { id:'used_as',        label:'used_as',        name:'产品类型定位', desc:'产品可被归类/定位为什么',            color:'comp',  icon:'🏷️',  example:'smart watch / normal suit' },
+  { id:'is_a',           label:'is_a',           name:'产品归类',     desc:'产品所属的概念或品类',               color:'comp',  icon:'📦',  example:'normal suit / screen protector' },
+  { id:'used_on',        label:'used_on',        name:'使用时间/季节',desc:'适合的时间段、季节或场合',           color:'time',  icon:'📅',  example:'late winter / holiday season' },
+  { id:'used_in_loc',    label:'used_in_loc',    name:'使用场所',     desc:'适合使用的地点或空间',               color:'loc',   icon:'📍',  example:'bedroom / outdoor / office' },
+  { id:'used_in_body',   label:'used_in_body',   name:'适用身体部位', desc:'适合的肤质、体型或身体部位',         color:'body',  icon:'🧴',  example:'sensitive skin / dry hair' },
+  { id:'used_with',      label:'used_with',      name:'互补产品',     desc:'通常与哪些产品搭配使用（co-buy）',   color:'comp',  icon:'🔗',  example:'screen protector / phone case' },
+  { id:'used_by',        label:'used_by',        name:'使用者',       desc:'典型的使用者身份',                   color:'aud',   icon:'👤',  example:'cat owner / pregnant women' },
+  { id:'xInterested_in', label:'xInterested_in', name:'用户兴趣标签', desc:'购买此产品的用户通常对什么感兴趣',   color:'int',   icon:'❤️',  example:'herbal medicine / outdoor sports' },
+  { id:'xIs_a',          label:'xIs_a',          name:'用户身份',     desc:'购买者的身份标签',                   color:'aud',   icon:'🪪',  example:'pregnant women / fitness enthusiast' },
+  { id:'xWant',          label:'xWant',          name:'用户意图',     desc:'用户购买背后真正想做的事',            color:'want',  icon:'💡',  example:'play tennis / lose weight' },
+];
+
+// COSMO state
+const CS = {
+  result: null,
+  activeSubTab: 'relations',
+  running: false,
+  generatedImages: {},   // key: 'main_0', 'aplus_1' etc.
+  generatingMain: false,
+  generatingAplus: false,
+};
+
+// ── RENDER COSMO TAB ──
+function renderCosmo(el) {
+  el.innerHTML = `
+    <div class="cosmo-hero">
+      <div class="cosmo-badge">🎓 Based on Amazon COSMO · SIGMOD '24</div>
+      <h3>🧠 COSMO 用户意图深度分析</h3>
+      <p>基于亚马逊 COSMO 论文算法，通过分析产品的<strong>搜索-购买行为</strong>和<strong>共同购买行为</strong>，挖掘 15 种语义关系，洞察用户真实意图，为 Listing 文案提供科学依据。</p>
+    </div>
+
+    <!-- RELATION LEGEND -->
+    <div style="background:white;border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:14px;box-shadow:var(--sh)">
+      <div style="font-weight:800;font-size:12px;margin-bottom:9px;display:flex;align-items:center;gap:6px">📖 COSMO 15种关系类型（来自论文 Table 2）</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+        ${COSMO_RELATIONS.map(r => `
+        <div style="display:flex;align-items:center;gap:5px;padding:5px 7px;background:#f8fafc;border-radius:6px;font-size:11px">
+          <span>${r.icon}</span>
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--text3)">${r.label}</div>
+            <div style="font-weight:600;color:var(--text)">${r.name}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- RUN BUTTON -->
+    <button class="cosmo-run-btn" onclick="runCosmoAnalysis()" ${CS.running?'disabled':''} id="cosmoRunBtn">
+      ${CS.running
+        ? '<span class="spin"></span> COSMO 分析中，请稍候...'
+        : '🚀 运行 COSMO 意图分析'}
+    </button>
+
+    ${CS.result ? renderCosmoResult() : `
+    <div class="empty">
+      <span class="ico">🧠</span>
+      <p>点击上方按钮运行分析<br>需要先填写产品标题/描述或上传图片</p>
+    </div>`}
+  `;
+}
+
+function renderCosmoResult() {
+  const r = CS.result;
+  if (!r) return '';
+
+  return `
+    <!-- SUB TABS -->
+    <div class="cosmo-tabs">
+      <div class="cosmo-subtab ${CS.activeSubTab==='relations'?'active':''}" onclick="setCosmoTab('relations')">🔗 15种关系图谱</div>
+      <div class="cosmo-subtab ${CS.activeSubTab==='behavior'?'active':''}" onclick="setCosmoTab('behavior')">🛒 购买行为分析</div>
+      <div class="cosmo-subtab ${CS.activeSubTab==='scores'?'active':''}" onclick="setCosmoTab('scores')">📊 可信度评分</div>
+      <div class="cosmo-subtab ${CS.activeSubTab==='strategy'?'active':''}" onclick="setCosmoTab('strategy')">✍️ 文案策略</div>
+      <div class="cosmo-subtab ${CS.activeSubTab==='images'?'active':''}" onclick="setCosmoTab('images')">🖼️ 图片方案</div>
+    </div>
+
+    ${CS.activeSubTab === 'relations' ? renderCosmoRelations(r) : ''}
+    ${CS.activeSubTab === 'behavior'  ? renderCosmoBehavior(r)  : ''}
+    ${CS.activeSubTab === 'scores'    ? renderCosmoScores(r)    : ''}
+    ${CS.activeSubTab === 'strategy'  ? renderCosmoStrategy(r)  : ''}
+    ${CS.activeSubTab === 'images'    ? renderCosmoImages(r)    : ''}
+
+    <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-ghost" style="width:auto;padding:7px 14px;font-size:12px" onclick="runCosmoAnalysis()">🔄 重新分析</button>
+      <button class="btn btn-primary" style="width:auto;padding:7px 14px;font-size:12px" onclick="applyCosmoToCopy()">✍️ 应用到文案</button>
+      <button class="btn btn-violet" style="width:auto;padding:7px 14px;font-size:12px" onclick="setCosmoTab('images');renderCosmo(document.getElementById('tabBody'))">🖼️ 查看图片方案</button>
+      <button class="btn btn-ghost" style="width:auto;padding:7px 14px;font-size:12px" onclick="exportCosmoJson()">📄 导出 JSON</button>
+    </div>
+  `;
+}
+
+function renderCosmoRelations(r) {
+  const rels = r.relations || {};
+  return `
+    <div style="font-weight:800;font-size:13px;margin-bottom:12px;display:flex;align-items:center;gap:7px">
+      🔗 产品语义关系知识图谱
+      <span style="font-size:11px;font-weight:400;color:var(--text2)">共 ${Object.values(rels).flat().filter(Boolean).length} 个知识节点</span>
+    </div>
+    <div class="cosmo-grid">
+      ${COSMO_RELATIONS.map(rel => {
+        const items = rels[rel.id] || [];
+        return `
+        <div class="cosmo-rel-card">
+          <div class="cosmo-rel-head">
+            <span class="cosmo-rel-icon">${rel.icon}</span>
+            <div>
+              <div class="cosmo-rel-title">${rel.name}</div>
+              <div class="cosmo-rel-type">${rel.label}</div>
+            </div>
+          </div>
+          <div class="cosmo-rel-body">
+            ${items.length
+              ? items.map(item => `<span class="cosmo-tag cosmo-tag-${rel.color}">${item}</span>`).join('')
+              : `<div class="cosmo-empty">—</div>`}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function renderCosmoBehavior(r) {
+  const sb = r.search_buy || {};
+  const cb = r.co_buy    || {};
+  return `
+    <div style="font-weight:800;font-size:13px;margin-bottom:12px;display:flex;align-items:center;gap:7px">🛒 用户行为意图分析</div>
+
+    <div class="cosmo-behavior-card">
+      <div class="cosmo-behavior-head">🔍 Search-Buy 搜索-购买意图（用户搜了什么词才买了这个产品）</div>
+      <div class="cosmo-kv-row"><span class="cosmo-kv-key">高转化查询词</span><span class="cosmo-kv-val">${(sb.high_conversion_queries||[]).map(q=>`<span class="cosmo-tag cosmo-tag-func">${q}</span>`).join('') || '—'}</span></div>
+      <div class="cosmo-kv-row"><span class="cosmo-kv-key">搜索意图类型</span><span class="cosmo-kv-val">${(sb.query_intent_types||[]).map(q=>`<span class="cosmo-tag cosmo-tag-eve">${q}</span>`).join('') || '—'}</span></div>
+      <div class="cosmo-kv-row"><span class="cosmo-kv-key">语义缺口分析</span><span class="cosmo-kv-val" style="color:var(--red)">${sb.semantic_gap || '—'}</span></div>
+      <div class="cosmo-kv-row"><span class="cosmo-kv-key">宽泛查询建议</span><span class="cosmo-kv-val">${sb.broad_query_suggestions || '—'}</span></div>
+      <div class="cosmo-kv-row"><span class="cosmo-kv-key">特异性评分</span><span class="cosmo-kv-val">${sb.specificity_note || '—'}</span></div>
+    </div>
+
+    <div class="cosmo-behavior-card">
+      <div class="cosmo-behavior-head">🛍️ Co-Buy 共同购买意图（用户通常同时购买哪些产品）</div>
+      <div class="cosmo-kv-row"><span class="cosmo-kv-key">强关联互补品</span><span class="cosmo-kv-val">${(cb.complementary_products||[]).map(p=>`<span class="cosmo-tag cosmo-tag-comp">${p}</span>`).join('') || '—'}</span></div>
+      <div class="cosmo-kv-row"><span class="cosmo-kv-key">共购行为原因</span><span class="cosmo-kv-val">${cb.co_buy_reason || '—'}</span></div>
+      <div class="cosmo-kv-row"><span class="cosmo-kv-key">场景套装建议</span><span class="cosmo-kv-val">${cb.bundle_suggestion || '—'}</span></div>
+      <div class="cosmo-kv-row"><span class="cosmo-kv-key">关联产品类型</span><span class="cosmo-kv-val">${(cb.product_type_pairs||[]).map(p=>`<span class="cosmo-tag cosmo-tag-aud">${p}</span>`).join('') || '—'}</span></div>
+    </div>
+
+    <div class="cosmo-insight-card">
+      <div class="cosmo-insight-title">🎯 核心意图三元组（COSMO Knowledge Triples）</div>
+      ${(r.knowledge_triples||[]).map(t => `
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:12px">
+        <span style="background:#dbeafe;color:#1e40af;padding:3px 8px;border-radius:5px;font-weight:700;font-size:11px">${t.head||''}</span>
+        <span style="color:var(--text3);font-size:10px;font-family:'JetBrains Mono',monospace">—${t.relation||''}→</span>
+        <span style="background:#dcfce7;color:#166534;padding:3px 8px;border-radius:5px;font-weight:600;font-size:11px">${t.tail||''}</span>
+        ${t.type?`<span style="font-size:9px;color:var(--text3)">${t.type}</span>`:''}
+      </div>`).join('') || '<div class="cosmo-empty">暂无三元组数据</div>'}
+    </div>`;
+}
+
+function renderCosmoScores(r) {
+  const scores = r.quality_scores || {};
+  const metrics = [
+    { key:'plausibility',  label:'可信度（Plausibility）', desc:'知识的合理性和准确性', color:'#2563eb' },
+    { key:'typicality',    label:'典型性（Typicality）',   desc:'是否代表典型购买意图', color:'#7c3aed' },
+    { key:'specificity',   label:'特异性（Specificity）',  desc:'知识的针对性，越高越精准', color:'#0d9488' },
+    { key:'informativeness',label:'信息量（Informativeness）',desc:'对用户是否有实际指导价值', color:'#d97706' },
+    { key:'completeness',  label:'完整性（Completeness）', desc:'覆盖场景的完整程度', color:'#e11d48' },
+  ];
+  return `
+    <div class="cosmo-insight-card">
+      <div class="cosmo-insight-title">📊 COSMO 知识质量评分</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:12px">基于论文中的 plausibility（可信度）和 typicality（典型性）双指标评估框架，结合产品实际情况综合评分。</div>
+      ${metrics.map(m => {
+        const val = scores[m.key] || 0;
+        const pct = Math.round(val * 100);
+        return `
+        <div class="cosmo-score-row">
+          <div class="cosmo-score-label" title="${m.desc}">${m.label}</div>
+          <div class="cosmo-score-bar">
+            <div class="cosmo-score-fill" style="width:${pct}%;background:${m.color}"></div>
+          </div>
+          <div class="cosmo-score-val" style="color:${m.color}">${pct}%</div>
+        </div>`;
+      }).join('')}
+      <div style="margin-top:12px;padding:10px;background:#f8fafc;border-radius:7px;font-size:11px;line-height:1.7;color:var(--text2)">
+        <strong>📌 评分说明：</strong>${r.score_explanation || '基于产品信息完整度和意图覆盖度综合评估。'}
+      </div>
+    </div>
+
+    <div class="cosmo-insight-card">
+      <div class="cosmo-insight-title">📈 意图覆盖分布</div>
+      ${(r.intent_distribution || []).map(d => `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:12px;width:120px;flex-shrink:0">${d.category}</span>
+        <div style="flex:1;background:#e2e8f0;border-radius:3px;height:8px;overflow:hidden">
+          <div style="width:${d.pct}%;background:linear-gradient(90deg,#2563eb,#7c3aed);height:100%;border-radius:3px"></div>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:var(--primary);width:32px;text-align:right">${d.pct}%</span>
+      </div>`).join('')}
+    </div>`;
+}
+
+function renderCosmoStrategy(r) {
+  const strat = r.copy_strategy || {};
+  return `
+    <div class="cosmo-copy-strategy">
+      <h4>💡 COSMO 驱动的文案策略建议</h4>
+      ${(strat.strategies || []).map((s,i) => `
+      <div class="cosmo-strategy-item">
+        <span class="cosmo-strategy-num">${i+1}</span>
+        <span>${s}</span>
+      </div>`).join('')}
+    </div>
+
+    <div class="cosmo-insight-card">
+      <div class="cosmo-insight-title">🎯 标题优化建议（基于 Search-Buy 意图）</div>
+      <div style="font-size:12px;line-height:1.7;color:var(--text2);margin-bottom:10px">${strat.title_suggestion || '—'}</div>
+      ${strat.suggested_title ? `
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;padding:10px;font-size:13px;font-weight:600;color:#166534">${strat.suggested_title}</div>` : ''}
+    </div>
+
+    <div class="cosmo-insight-card">
+      <div class="cosmo-insight-title">⭐ 五行卖点框架（基于 COSMO 15种关系）</div>
+      ${(strat.bullet_framework || []).map((b,i) => `
+      <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:12px">
+        <span style="background:var(--primary);color:white;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:800;flex-shrink:0;height:fit-content">Bullet ${i+1}</span>
+        <div>
+          <div style="font-weight:700;margin-bottom:2px">${b.focus}</div>
+          <div style="color:var(--text2)">${b.rationale}</div>
+          <div style="margin-top:4px;font-size:11px;color:var(--primary);font-family:'JetBrains Mono',monospace">关系：${b.cosmo_relation}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+
+    <div class="cosmo-insight-card">
+      <div class="cosmo-insight-title">🔍 A+ 页面模块建议</div>
+      ${(strat.aplus_modules || []).map(m => `
+      <div style="padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:12px">
+        <div style="font-weight:700;margin-bottom:3px">${m.module}</div>
+        <div style="color:var(--text2)">${m.rationale}</div>
+      </div>`).join('')}
+    </div>`;
+}
+
+function setCosmoTab(tab) {
+  CS.activeSubTab = tab;
+  renderCosmo(document.getElementById('tabBody'));
+}
+
+// ── COSMO IMAGE PLAN RENDER ──
+function renderCosmoImages(r) {
+  const img = r.image_plan || {};
+  const mainShots   = img.main_shots   || [];
+  const aplusShots  = img.aplus_shots  || [];
+  const genImages   = CS.generatedImages || {};
+
+  return `
+    <!-- MAIN SHOTS PLAN -->
+    <div class="cosmo-insight-card" style="margin-bottom:12px">
+      <div class="cosmo-insight-title">📷 主图方案（基于 COSMO Search-Buy 意图）
+        <span style="font-size:10px;font-weight:400;color:var(--text2);margin-left:6px">共 ${mainShots.length} 张</span>
+      </div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;padding:8px;background:#eff6ff;border-radius:6px;line-height:1.6">
+        💡 <strong>设计依据：</strong>主图需要覆盖用户的搜索-购买意图（Search-Buy），让用户在搜索结果页第一眼就产生点击冲动。基于 COSMO 分析，以下方案分别对应不同的 <code>used_for_func</code>、<code>xWant</code>、<code>used_for_aud</code> 关系。
+      </div>
+      ${mainShots.map((shot, i) => `
+      <div class="cosmo-img-plan-card" id="mainPlan${i}">
+        <div class="cosmo-img-plan-head">
+          <div class="cosmo-img-plan-num">主图${i+1}</div>
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:12px">${shot.title}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px">COSMO关系：<code style="background:#f1f5f9;padding:1px 5px;border-radius:3px">${shot.cosmo_relation}</code></div>
+          </div>
+          <span class="cosmo-img-ratio-badge">${shot.ratio || '1:1'}</span>
+        </div>
+        <div class="cosmo-img-plan-body">
+          <div class="cosmo-img-plan-desc">${shot.description}</div>
+          <div class="cosmo-img-plan-meta">
+            <span>🎨 风格：${shot.style}</span>
+            <span>💡 光线：${shot.lighting}</span>
+            <span>📐 构图：${shot.composition}</span>
+          </div>
+          <div class="cosmo-img-prompt-box" id="mainPrompt${i}">${shot.prompt}</div>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+            <button class="cosmo-gen-btn" onclick="genCosmoSingleImage('main',${i})">
+              ${genImages['main_'+i]?.loading ? '<span class="spin"></span> 生成中...' : '⚡ 立即生成'}
+            </button>
+            <button class="cosmo-copy-prompt-btn" onclick="copyCosmoPrompt('mainPrompt${i}')">📋 复制Prompt</button>
+          </div>
+          ${genImages['main_'+i]?.url ? `
+          <div style="margin-top:10px">
+            <img src="${genImages['main_'+i].url}" style="width:100%;border-radius:8px;cursor:pointer;max-height:280px;object-fit:contain;background:#f8fafc" onclick="openLightbox('${genImages['main_'+i].url}')">
+            <button onclick="downloadImg('${genImages['main_'+i].url}','COSMO_主图${i+1}')" style="margin-top:6px;width:100%;padding:5px;background:#f8fafc;border:1px solid var(--border);border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit">⬇ 下载</button>
+          </div>` : ''}
+          ${genImages['main_'+i]?.error ? `<div style="color:var(--red);font-size:11px;margin-top:6px">❌ ${genImages['main_'+i].error}</div>` : ''}
+        </div>
+      </div>`).join('')}
+      <button class="cosmo-run-btn" style="margin-top:4px;background:linear-gradient(135deg,#2563eb,#0d9488)" onclick="genAllCosmoMain()">
+        ${CS.generatingMain ? '<span class="spin"></span> 批量生成主图中...' : '🖼️ 批量生成全部主图'}
+      </button>
+    </div>
+
+    <!-- A+ SHOTS PLAN -->
+    <div class="cosmo-insight-card">
+      <div class="cosmo-insight-title">✨ A+图片方案（基于 COSMO Co-Buy 意图）
+        <span style="font-size:10px;font-weight:400;color:var(--text2);margin-left:6px">共 ${aplusShots.length} 张</span>
+      </div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;padding:8px;background:#f3e8ff;border-radius:6px;line-height:1.6">
+        💡 <strong>设计依据：</strong>A+图片需要深化用户的购买决策，覆盖 Co-Buy（共同购买）场景和 <code>xWant</code>（深层意图），展示产品在完整生活场景中的价值，促进连带购买。
+      </div>
+      ${aplusShots.map((shot, i) => `
+      <div class="cosmo-img-plan-card" id="aplusPlan${i}">
+        <div class="cosmo-img-plan-head">
+          <div class="cosmo-img-plan-num" style="background:linear-gradient(135deg,#7c3aed,#a855f7)">A+${i+1}</div>
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:12px">${shot.title}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px">模块类型：<code style="background:#f3e8ff;padding:1px 5px;border-radius:3px">${shot.module_type}</code> · COSMO关系：<code style="background:#f1f5f9;padding:1px 5px;border-radius:3px">${shot.cosmo_relation}</code></div>
+          </div>
+          <span class="cosmo-img-ratio-badge" style="background:#f3e8ff;color:#7c3aed">${shot.ratio || '21:9'}</span>
+        </div>
+        <div class="cosmo-img-plan-body">
+          <div class="cosmo-img-plan-desc">${shot.description}</div>
+          <div class="cosmo-img-plan-meta">
+            <span>🎨 风格：${shot.style}</span>
+            <span>📐 尺寸：${shot.dimensions || '桌面满宽'}</span>
+            <span>🎯 目标：${shot.goal}</span>
+          </div>
+          <div class="cosmo-img-prompt-box" id="aplusPrompt${i}">${shot.prompt}</div>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+            <button class="cosmo-gen-btn" style="background:linear-gradient(135deg,#7c3aed,#a855f7)" onclick="genCosmoSingleImage('aplus',${i})">
+              ${genImages['aplus_'+i]?.loading ? '<span class="spin"></span> 生成中...' : '⚡ 立即生成'}
+            </button>
+            <button class="cosmo-copy-prompt-btn" onclick="copyCosmoPrompt('aplusPrompt${i}')">📋 复制Prompt</button>
+          </div>
+          ${genImages['aplus_'+i]?.url ? `
+          <div style="margin-top:10px">
+            <img src="${genImages['aplus_'+i].url}" style="width:100%;border-radius:8px;cursor:pointer;max-height:200px;object-fit:contain;background:#f8fafc" onclick="openLightbox('${genImages['aplus_'+i].url}')">
+            <button onclick="downloadImg('${genImages['aplus_'+i].url}','COSMO_A+图${i+1}')" style="margin-top:6px;width:100%;padding:5px;background:#f8fafc;border:1px solid var(--border);border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit">⬇ 下载</button>
+          </div>` : ''}
+          ${genImages['aplus_'+i]?.error ? `<div style="color:var(--red);font-size:11px;margin-top:6px">❌ ${genImages['aplus_'+i].error}</div>` : ''}
+        </div>
+      </div>`).join('')}
+      <button class="cosmo-run-btn" style="margin-top:4px;background:linear-gradient(135deg,#7c3aed,#e11d48)" onclick="genAllCosmoAplus()">
+        ${CS.generatingAplus ? '<span class="spin"></span> 批量生成A+图中...' : '✨ 批量生成全部A+图'}
+      </button>
+    </div>
+
+    <!-- SAVE ALL -->
+    ${Object.values(CS.generatedImages||{}).filter(g=>g?.url).length > 0 ? `
+    <button class="btn btn-dark" style="margin-top:8px" onclick="saveCosmoImages()">
+      🗂️ 一键保存所有已生成图片（${Object.values(CS.generatedImages||{}).filter(g=>g?.url).length}张）
+    </button>` : ''}
+  `;
+}
+
+// ── COSMO IMAGE GENERATION ──
+function copyCosmoPrompt(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(() => showToast('✓ Prompt 已复制', 'success'));
+}
+
+async function genCosmoSingleImage(type, idx) {
+  if (!S.apiKey) { showToast('请先配置 API Key', 'error'); return; }
+  const key = `${type}_${idx}`;
+  const shots = type === 'main'
+    ? CS.result?.image_plan?.main_shots
+    : CS.result?.image_plan?.aplus_shots;
+  const shot = shots?.[idx];
+  if (!shot) { showToast('找不到该图片方案', 'error'); return; }
+
+  CS.generatedImages[key] = { loading: true };
+  renderCosmo(document.getElementById('tabBody'));
+
+  try {
+    const url = await generateOneImage(shot.prompt);
+    CS.generatedImages[key] = { loading: false, url };
+    showToast(`✓ ${type === 'main' ? '主图' : 'A+图'}${idx+1} 生成成功`, 'success');
+  } catch(e) {
+    CS.generatedImages[key] = { loading: false, error: e.message };
+    showToast(`生成失败: ${e.message}`, 'error');
+  }
+  renderCosmo(document.getElementById('tabBody'));
+}
+
+async function genAllCosmoMain() {
+  if (!S.apiKey) { showToast('请先配置 API Key', 'error'); return; }
+  const shots = CS.result?.image_plan?.main_shots || [];
+  if (!shots.length) { showToast('没有主图方案', 'error'); return; }
+  CS.generatingMain = true;
+  renderCosmo(document.getElementById('tabBody'));
+  showLoading('🖼️ 批量生成 COSMO 主图...', `共 ${shots.length} 张`);
+
+  for (let i = 0; i < shots.length; i++) {
+    setProgress(Math.round(i / shots.length * 100));
+    document.getElementById('modalDesc').textContent = `正在生成主图 ${i+1}/${shots.length}: ${shots[i].title}`;
+    const key = `main_${i}`;
+    CS.generatedImages[key] = { loading: true };
+    try {
+      const url = await generateOneImage(shots[i].prompt);
+      CS.generatedImages[key] = { loading: false, url };
+    } catch(e) {
+      CS.generatedImages[key] = { loading: false, error: e.message };
+    }
+    if (i < shots.length - 1) await new Promise(r => setTimeout(r, 600));
+  }
+
+  CS.generatingMain = false;
+  setProgress(100);
+  hideLoading();
+  renderCosmo(document.getElementById('tabBody'));
+  const ok = shots.map((_,i) => CS.generatedImages[`main_${i}`]?.url).filter(Boolean).length;
+  showToast(`✓ 主图生成完成：${ok}/${shots.length} 成功`, 'success');
+}
+
+async function genAllCosmoAplus() {
+  if (!S.apiKey) { showToast('请先配置 API Key', 'error'); return; }
+  const shots = CS.result?.image_plan?.aplus_shots || [];
+  if (!shots.length) { showToast('没有A+图方案', 'error'); return; }
+  CS.generatingAplus = true;
+  renderCosmo(document.getElementById('tabBody'));
+  showLoading('✨ 批量生成 COSMO A+图...', `共 ${shots.length} 张`);
+
+  for (let i = 0; i < shots.length; i++) {
+    setProgress(Math.round(i / shots.length * 100));
+    document.getElementById('modalDesc').textContent = `正在生成A+图 ${i+1}/${shots.length}: ${shots[i].title}`;
+    const key = `aplus_${i}`;
+    CS.generatedImages[key] = { loading: true };
+    try {
+      const url = await generateOneImage(shots[i].prompt);
+      CS.generatedImages[key] = { loading: false, url };
+    } catch(e) {
+      CS.generatedImages[key] = { loading: false, error: e.message };
+    }
+    if (i < shots.length - 1) await new Promise(r => setTimeout(r, 600));
+  }
+
+  CS.generatingAplus = false;
+  setProgress(100);
+  hideLoading();
+  renderCosmo(document.getElementById('tabBody'));
+  const ok = shots.map((_,i) => CS.generatedImages[`aplus_${i}`]?.url).filter(Boolean).length;
+  showToast(`✓ A+图生成完成：${ok}/${shots.length} 成功`, 'success');
+}
+
+function saveCosmoImages() {
+  Object.entries(CS.generatedImages).forEach(([key, g]) => {
+    if (!g?.url) return;
+    const label = key.startsWith('main') ? `COSMO主图${parseInt(key.split('_')[1])+1}` : `COSMO_A+图${parseInt(key.split('_')[1])+1}`;
+    downloadImg(g.url, label);
+  });
+  showToast('⬇ 开始下载所有图片', 'success');
+}
+
+// ── RUN COSMO ANALYSIS ──
+async function runCosmoAnalysis() {
+  const title = document.getElementById('productTitle').value || S.productTitle;
+  const desc  = document.getElementById('productDesc').value  || S.productDesc;
+  if (!title && !desc && !S.analysis) {
+    showToast('请先输入产品标题或描述', 'error'); return;
+  }
+  if (!S.apiKey) { showToast('请先在设置中配置 API Key', 'error'); switchTab('settings'); return; }
+
+  CS.running = true;
+  renderCosmo(document.getElementById('tabBody'));
+  showLoading('🧠 COSMO 意图分析中...', '正在模拟亚马逊 COSMO 算法挖掘用户意图');
+
+  try {
+    const analysisCtx = S.analysis ? `\n已知产品分析：${JSON.stringify(S.analysis)}` : '';
+    const prompt = `你是亚马逊 COSMO 知识图谱系统（SIGMOD 2024论文）的模拟实现专家。
+请对以下产品进行深度意图分析，完整模拟 COSMO 算法的知识提取流程。
+
+产品标题：${title}
+产品描述：${desc}
+平台：${S.platform || '亚马逊'}
+${analysisCtx}
+
+## 分析框架（严格遵循COSMO论文）
+
+COSMO 通过两种用户行为挖掘意图：
+1. **Search-Buy（搜索-购买）**：用户搜了什么关键词最终购买了此产品
+2. **Co-Buy（共同购买）**：用户购买此产品时通常同时购买什么
+
+基于此，请生成完整的 COSMO 知识图谱分析，返回如下 JSON：
+
+{
+  "relations": {
+    "used_for_func": ["功能1","功能2","功能3","功能4"],
+    "used_for_eve": ["场景1","场景2","场景3"],
+    "used_for_aud": ["受众1","受众2","受众3"],
+    "capable_of": ["能力1","能力2","能力3","能力4"],
+    "used_to": ["目的1","目的2","目的3"],
+    "used_as": ["定位1","定位2"],
+    "is_a": ["类别1","类别2"],
+    "used_on": ["时间/季节1","时间/季节2"],
+    "used_in_loc": ["场所1","场所2","场所3"],
+    "used_in_body": ["部位/肤质1","部位/肤质2"],
+    "used_with": ["互补品1","互补品2","互补品3"],
+    "used_by": ["使用者1","使用者2","使用者3"],
+    "xInterested_in": ["兴趣1","兴趣2","兴趣3"],
+    "xIs_a": ["身份1","身份2","身份3"],
+    "xWant": ["深层意图1","深层意图2","深层意图3"]
+  },
+  "search_buy": {
+    "high_conversion_queries": ["高转化搜索词1","搜索词2","搜索词3","搜索词4","搜索词5"],
+    "query_intent_types": ["功能性意图","场景意图","受众意图"],
+    "semantic_gap": "指出产品描述与用户真实搜索意图之间的差距",
+    "broad_query_suggestions": "哪些宽泛模糊的查询最值得优化",
+    "specificity_note": "用户搜索特异性分析（broad/specific）"
+  },
+  "co_buy": {
+    "complementary_products": ["互补品1","互补品2","互补品3","互补品4"],
+    "co_buy_reason": "共同购买的核心原因（common intention背后的逻辑）",
+    "bundle_suggestion": "推荐的产品套装组合及理由",
+    "product_type_pairs": ["产品类型配对1","配对2","配对3"]
+  },
+  "knowledge_triples": [
+    {"head":"产品名","relation":"used_for_func","tail":"具体功能","type":"search-buy"},
+    {"head":"产品名","relation":"xWant","tail":"用户深层意图","type":"co-buy"},
+    {"head":"产品名","relation":"used_for_aud","tail":"目标用户","type":"search-buy"},
+    {"head":"产品名","relation":"capable_of","tail":"核心能力","type":"co-buy"},
+    {"head":"产品名","relation":"xIs_a","tail":"用户身份","type":"search-buy"},
+    {"head":"产品名","relation":"used_with","tail":"互补品","type":"co-buy"}
+  ],
+  "quality_scores": {
+    "plausibility":    0.85,
+    "typicality":      0.78,
+    "specificity":     0.72,
+    "informativeness": 0.80,
+    "completeness":    0.75
+  },
+  "score_explanation": "简短说明评分依据（2-3句话）",
+  "intent_distribution": [
+    {"category":"功能性意图","pct":35},
+    {"category":"场景/活动意图","pct":25},
+    {"category":"受众/用户意图","pct":20},
+    {"category":"共购互补意图","pct":15},
+    {"category":"深层情感意图","pct":5}
+  ],
+  "copy_strategy": {
+    "strategies": [
+      "基于used_for_func：在标题开头突出最核心的功能关键词",
+      "基于xWant：在描述中讲述用户的深层故事，从意图出发",
+      "基于used_for_aud：精准定向目标人群，在bullet中直接呼唤",
+      "基于co_buy：在A+页面推荐互补产品，提升连带购买",
+      "基于used_for_eve：强调使用场景，帮助用户产生代入感"
+    ],
+    "title_suggestion": "解释如何基于COSMO分析优化标题",
+    "suggested_title": "给出一个基于COSMO意图优化的标题示例（英文，200字符内）",
+    "bullet_framework": [
+      {"focus":"核心功能卖点","rationale":"对应used_for_func关系，解决最大痛点","cosmo_relation":"used_for_func"},
+      {"focus":"用户深层意图","rationale":"对应xWant关系，打动情感","cosmo_relation":"xWant"},
+      {"focus":"目标受众认同","rationale":"对应xIs_a/used_for_aud关系，制造归属感","cosmo_relation":"xIs_a + used_for_aud"},
+      {"focus":"使用场景覆盖","rationale":"对应used_for_eve/used_in_loc关系，扩大使用想象","cosmo_relation":"used_for_eve"},
+      {"focus":"产品能力证明","rationale":"对应capable_of关系，提供具体可信的承诺","cosmo_relation":"capable_of"}
+    ],
+    "aplus_modules": [
+      {"module":"品牌故事模块","rationale":"呼应xWant深层意图，建立情感连接"},
+      {"module":"使用场景矩阵","rationale":"覆盖used_for_eve中识别的多个场景"},
+      {"module":"对比优势表格","rationale":"突出capable_of中的核心能力优势"},
+      {"module":"互补产品推荐","rationale":"基于co-buy中识别的强关联产品"}
+    ]
+  },
+  "image_plan": {
+    "main_shots": [
+      {
+        "title": "主图1标题（简短，如「白底极简功能展示」）",
+        "cosmo_relation": "used_for_func",
+        "ratio": "1:1",
+        "style": "极简白底，产品居中",
+        "lighting": "柔和均匀正面光",
+        "composition": "产品占画面60%，四周留白",
+        "goal": "突出产品外观和核心功能，适合搜索结果缩略图",
+        "description": "一句话说明这张主图想传达的核心信息",
+        "prompt": "完整的英文图片生成Prompt（100-200字），包含：产品描述、背景设置、光线设置、构图方式、风格调性、色调，直接可用于AI图片生成"
+      },
+      {
+        "title": "主图2标题（如「使用场景生活方式图」）",
+        "cosmo_relation": "used_for_eve",
+        "ratio": "1:1",
+        "style": "生活场景，自然光",
+        "lighting": "自然侧光，温暖色调",
+        "composition": "人物/道具在场景中使用产品",
+        "goal": "展示真实使用场景，呼应used_for_eve关系中的场景",
+        "description": "一句话说明场景意图",
+        "prompt": "完整英文生成Prompt"
+      },
+      {
+        "title": "主图3标题（如「目标受众场景图」）",
+        "cosmo_relation": "xIs_a + used_for_aud",
+        "ratio": "1:1",
+        "style": "人物为主，情感共鸣",
+        "lighting": "柔和自然光",
+        "composition": "目标用户群体使用产品",
+        "goal": "精准定向目标受众，制造归属感",
+        "description": "一句话说明受众意图",
+        "prompt": "完整英文生成Prompt"
+      }
+    ],
+    "aplus_shots": [
+      {
+        "title": "A+图1标题（如「品牌英雄大图」）",
+        "module_type": "包含文本的高级背景图片",
+        "cosmo_relation": "xWant",
+        "ratio": "21:9",
+        "dimensions": "桌面 1464×600",
+        "style": "品牌调性，高端大气",
+        "goal": "建立品牌情感连接，呼应用户深层意图",
+        "description": "一句话说明这张A+图的核心诉求",
+        "prompt": "完整的英文图片生成Prompt，包含：场景设置、氛围调性、产品与用户关系、色彩方向、文字区域留白建议"
+      },
+      {
+        "title": "A+图2标题（如「核心功能对比图」）",
+        "module_type": "包含文本的高级双图片",
+        "cosmo_relation": "capable_of",
+        "ratio": "16:9",
+        "dimensions": "桌面 650×350",
+        "style": "对比清晰，专业感强",
+        "goal": "展示产品核心能力，建立信任",
+        "description": "一句话说明功能展示逻辑",
+        "prompt": "完整英文生成Prompt"
+      },
+      {
+        "title": "A+图3标题（如「使用场景矩阵图」）",
+        "module_type": "使用场景展示",
+        "cosmo_relation": "used_for_eve + used_in_loc",
+        "ratio": "21:9",
+        "dimensions": "桌面 970×300",
+        "style": "多场景拼接，生活化",
+        "goal": "覆盖多个使用场景，扩大用户想象空间",
+        "description": "一句话说明场景覆盖策略",
+        "prompt": "完整英文生成Prompt"
+      },
+      {
+        "title": "A+图4标题（如「互补搭配图」）",
+        "module_type": "产品搭配推荐",
+        "cosmo_relation": "used_with（Co-Buy）",
+        "ratio": "16:9",
+        "dimensions": "桌面 650×350",
+        "style": "整洁陈列，搭配感强",
+        "goal": "展示共购场景，促进连带购买",
+        "description": "一句话说明搭配组合逻辑",
+        "prompt": "完整英文生成Prompt"
+      }
+    ]
+  }
+}
+
+只返回JSON对象，不要任何markdown或额外说明。所有数组至少3个元素，内容要具体针对这个产品，image_plan中的每个prompt必须是完整的、可直接用于AI图片生成的英文提示词（100-200字）。
+
+    const resp = await callGeminiText([{ text: prompt }]);
+    const jsonMatch = resp.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('AI 返回格式错误');
+    CS.result = JSON.parse(jsonMatch[0]);
+    CS.activeSubTab = 'relations';
+    CS.generatedImages = {};
+
+    // Auto-update right panel with COSMO enriched analysis
+    updateRightPanelWithCosmo();
+
+    hideLoading();
+    CS.running = false;
+    renderCosmo(document.getElementById('tabBody'));
+    showToast('✓ COSMO 意图分析完成', 'success');
+  } catch(e) {
+    hideLoading();
+    CS.running = false;
+    renderCosmo(document.getElementById('tabBody'));
+    showToast('COSMO 分析失败: ' + e.message, 'error');
+    console.error(e);
+  }
+}
+
+function updateRightPanelWithCosmo() {
+  if (!CS.result) return;
+  const r = CS.result;
+  const xWant = (r.relations?.xWant || []).join('、');
+  const xIs_a = (r.relations?.xIs_a || []).join('、');
+  const funcs  = (r.relations?.used_for_func || []).join('、');
+  const kws    = (r.search_buy?.high_conversion_queries || []).join('、');
+  const sum = document.getElementById('analysisSummary');
+  if (sum) {
+    sum.innerHTML += `
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:10px;font-weight:800;color:#7c3aed;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">🧠 COSMO 意图增强</div>
+        <div style="font-size:11px;margin-bottom:4px"><strong>用户深层意图：</strong>${xWant||'—'}</div>
+        <div style="font-size:11px;margin-bottom:4px"><strong>用户身份：</strong>${xIs_a||'—'}</div>
+        <div style="font-size:11px;margin-bottom:4px"><strong>核心功能：</strong>${funcs||'—'}</div>
+        <div style="font-size:11px"><strong>高转化词：</strong>${kws||'—'}</div>
+      </div>`;
+  }
+}
+
+// ── APPLY COSMO TO COPY GENERATION ──
+function applyCosmoToCopy() {
+  if (!CS.result) return;
+  const r = CS.result;
+  // Enrich the analysis state
+  if (!S.analysis) S.analysis = {};
+  S.analysis.cosmo_relations = r.relations;
+  S.analysis.cosmo_search_intent = r.search_buy?.high_conversion_queries;
+  S.analysis.cosmo_user_intent = r.relations?.xWant;
+  S.analysis.cosmo_audience = r.relations?.xIs_a;
+  S.analysis.cosmo_strategy = r.copy_strategy?.strategies;
+  showToast('✓ COSMO 分析已注入，点击「全部生成」查看效果', 'success');
+  switchTab('copy');
+}
+
+// ── EXPORT COSMO JSON ──
+function exportCosmoJson() {
+  if (!CS.result) return;
+  const blob = new Blob([JSON.stringify(CS.result, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `cosmo_analysis_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  showToast('✓ COSMO 分析 JSON 已导出', 'success');
 }
 
 // ╔══════════════════════════════════════╗
