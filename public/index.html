@@ -255,6 +255,52 @@ select.inp{cursor:pointer}
 
 /* ── DIVIDER ── */
 .divider{height:1px;background:var(--border);margin:2px 0}
+
+/* ── BATCH IMPORT ── */
+.batch-intro{background:linear-gradient(135deg,#0f172a,#1e3a8a);color:white;border-radius:10px;padding:16px;margin-bottom:16px}
+.batch-intro h3{font-size:15px;font-weight:800;margin-bottom:5px}
+.batch-intro p{font-size:12px;opacity:.8;line-height:1.6}
+.batch-steps{display:flex;gap:0;margin-bottom:16px;background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--sh)}
+.batch-step{flex:1;padding:10px 8px;text-align:center;font-size:11px;font-weight:600;border-right:1px solid var(--border);color:var(--text2);cursor:default}
+.batch-step:last-child{border-right:none}
+.batch-step.active{background:var(--primary-l);color:var(--primary)}
+.batch-step .num{display:block;font-size:16px;margin-bottom:3px}
+.tpl-card{background:white;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:var(--sh)}
+.tpl-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.tpl-card p{font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6}
+.col-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;margin:2px 2px 2px 0}
+.col-required{background:#fee2e2;color:#991b1b}
+.col-optional{background:#f0fdf4;color:#166534}
+.upload-csv-zone{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#fafbfd;transition:all .2s;margin-bottom:12px}
+.upload-csv-zone:hover,.upload-csv-zone.drag{border-color:var(--primary);background:var(--primary-l)}
+.upload-csv-zone.loaded{border-color:var(--green);background:#f0fdf4}
+.upload-csv-zone .csv-ico{font-size:32px;margin-bottom:8px}
+.batch-table-wrap{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--sh);margin-bottom:14px}
+.batch-table-head{background:#f8fafc;border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.batch-table-title{font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px}
+.batch-table{width:100%;border-collapse:collapse;font-size:12px}
+.batch-table th{background:#f8fafc;padding:8px 12px;text-align:left;font-weight:700;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap}
+.batch-table td{padding:8px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.batch-table tr:last-child td{border-bottom:none}
+.batch-table tr:hover td{background:#fafbfd}
+.row-status{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700}
+.row-pending{background:#f1f5f9;color:var(--text3)}
+.row-processing{background:#fef3c7;color:#d97706}
+.row-done{background:#dcfce7;color:#166534}
+.row-error{background:#fee2e2;color:#991b1b}
+.batch-progress-bar{height:5px;background:#e2e8f0;border-radius:3px;margin:8px 0;overflow:hidden}
+.batch-progress-fill{height:100%;background:linear-gradient(90deg,#2563eb,#10b981);border-radius:3px;transition:width .3s}
+.batch-result-card{background:white;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:var(--sh);cursor:pointer;transition:all .15s}
+.batch-result-card:hover{border-color:var(--primary);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.batch-result-card.selected{border-color:var(--primary);background:var(--primary-l)}
+.brc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.brc-title{font-weight:700;font-size:13px;flex:1;margin-right:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brc-body{font-size:11.5px;color:var(--text2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.export-bar{background:white;border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);margin-bottom:14px}
+.export-bar-title{font-weight:700;font-size:12px;flex:1}
+.export-btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all .15s}
+.export-btn-green{background:var(--green);color:white}.export-btn-green:hover{background:#059669}
+.export-btn-outline{background:white;border:1px solid var(--border);color:var(--text)}.export-btn-outline:hover{background:var(--bg)}
 </style>
 </head>
 <body>
@@ -378,6 +424,7 @@ select.inp{cursor:pointer}
   <main class="center">
     <nav class="tabs">
       <div class="tab active" onclick="switchTab('copy')" data-tab="copy">📄 文案结果</div>
+      <div class="tab" onclick="switchTab('batch')" data-tab="batch">📊 批量导入</div>
       <div class="tab" onclick="switchTab('prompt')" data-tab="prompt">🎨 组图Prompt</div>
       <div class="tab" onclick="switchTab('images')" data-tab="images">🖼️ 生成的图片</div>
       <div class="tab" onclick="switchTab('aplus')" data-tab="aplus">✨ A+图片</div>
@@ -443,7 +490,8 @@ const S = {
   productDesc: '',
   platform: '亚马逊',
   apiKey: localStorage.getItem('alc_apikey') || '',
-  model: localStorage.getItem('alc_model') || 'gemini-2.5-flash-preview-04-17',
+  model: localStorage.getItem('alc_model') || 'gemini-2.5-flash',
+  imgModel: localStorage.getItem('alc_imgmodel') || 'gemini-2.5-flash-image',
   analysis: null,
   copyResult: null,
   prompts: [],
@@ -477,7 +525,7 @@ function switchTab(tab) {
 }
 function renderTab(t) {
   const el = document.getElementById('tabBody');
-  ({copy:renderCopy, prompt:renderPrompt, images:renderImages, aplus:renderAplus,
+  ({copy:renderCopy, batch:renderBatch, prompt:renderPrompt, images:renderImages, aplus:renderAplus,
     overlay:renderOverlay, brand:renderBrand, settings:renderSettings}[t] || renderCopy)(el);
 }
 
@@ -1014,21 +1062,60 @@ function renderSettings(el) {
         </div>
       </div>
       <div class="settings-field">
-        <label>文字/分析模型</label>
+        <label>文字 / 分析模型</label>
         <select class="inp" id="modelIn">
-          <option value="gemini-2.5-flash-preview-04-17" ${S.model==='gemini-2.5-flash-preview-04-17'?'selected':''}>gemini-2.5-flash-preview-04-17（推荐 ⭐）</option>
-          <option value="gemini-2.0-flash-exp" ${S.model==='gemini-2.0-flash-exp'?'selected':''}>gemini-2.0-flash-exp</option>
-          <option value="gemini-1.5-pro" ${S.model==='gemini-1.5-pro'?'selected':''}>gemini-1.5-pro（高质量）</option>
-          <option value="gemini-1.5-flash" ${S.model==='gemini-1.5-flash'?'selected':''}>gemini-1.5-flash（快速）</option>
+          <optgroup label="🌟 Gemini 3 系列（最新）">
+            <option value="models/gemini-3.1-pro-preview"    ${S.model==='models/gemini-3.1-pro-preview'?'selected':''}>Gemini 3.1 Pro Preview — 最强推理 ⭐</option>
+            <option value="models/gemini-3.1-flash-lite-preview" ${S.model==='models/gemini-3.1-flash-lite-preview'?'selected':''}>Gemini 3.1 Flash Lite Preview — 极速轻量</option>
+            <option value="models/gemini-3-pro-preview"      ${S.model==='models/gemini-3-pro-preview'?'selected':''}>Gemini 3 Pro Preview</option>
+            <option value="models/gemini-3-flash-preview"    ${S.model==='models/gemini-3-flash-preview'?'selected':''}>Gemini 3 Flash Preview</option>
+          </optgroup>
+          <optgroup label="✅ Gemini 2.5 系列（稳定）">
+            <option value="models/gemini-2.5-flash"          ${S.model==='models/gemini-2.5-flash'?'selected':''}>Gemini 2.5 Flash — 均衡推荐 ⭐</option>
+            <option value="models/gemini-2.5-pro"            ${S.model==='models/gemini-2.5-pro'?'selected':''}>Gemini 2.5 Pro — 最高质量</option>
+            <option value="models/gemini-2.5-flash-lite"     ${S.model==='models/gemini-2.5-flash-lite'?'selected':''}>Gemini 2.5 Flash-Lite — 节省配额</option>
+          </optgroup>
+          <optgroup label="⚡ Gemini 2.0 系列">
+            <option value="models/gemini-2.0-flash"          ${S.model==='models/gemini-2.0-flash'?'selected':''}>Gemini 2.0 Flash</option>
+            <option value="models/gemini-2.0-flash-001"      ${S.model==='models/gemini-2.0-flash-001'?'selected':''}>Gemini 2.0 Flash 001（稳定版）</option>
+            <option value="models/gemini-2.0-flash-lite"     ${S.model==='models/gemini-2.0-flash-lite'?'selected':''}>Gemini 2.0 Flash-Lite（最快）</option>
+          </optgroup>
+          <optgroup label="🔁 Latest 别名">
+            <option value="models/gemini-flash-latest"       ${S.model==='models/gemini-flash-latest'?'selected':''}>gemini-flash-latest（始终最新 Flash）</option>
+            <option value="models/gemini-pro-latest"         ${S.model==='models/gemini-pro-latest'?'selected':''}>gemini-pro-latest（始终最新 Pro）</option>
+            <option value="models/gemini-flash-lite-latest"  ${S.model==='models/gemini-flash-lite-latest'?'selected':''}>gemini-flash-lite-latest</option>
+          </optgroup>
         </select>
+        <div class="settings-hint">用于文案生成、AI提取分析。推荐 <strong>Gemini 2.5 Flash</strong>（质量与速度均衡）或 <strong>Gemini 3.1 Pro</strong>（最高质量）。</div>
       </div>
       <div class="settings-field">
         <label>图片生成模型</label>
         <select class="inp" id="imgModelIn">
-          <option value="gemini-2.0-flash-exp-image-generation">gemini-2.0-flash-exp-image-generation（推荐）</option>
-          <option value="imagen-3.0-generate-002">imagen-3.0-generate-002（高质量，需升级套餐）</option>
+          <optgroup label="🎨 Gemini 原生图片生成">
+            <option value="models/gemini-2.5-flash-image"      ${S.imgModel==='models/gemini-2.5-flash-image'?'selected':''}>Gemini 2.5 Flash Image — 推荐 ⭐</option>
+            <option value="models/gemini-3-pro-image-preview"  ${S.imgModel==='models/gemini-3-pro-image-preview'?'selected':''}>Gemini 3 Pro Image Preview（最高质量）</option>
+            <option value="models/gemini-3.1-flash-image-preview" ${S.imgModel==='models/gemini-3.1-flash-image-preview'?'selected':''}>Gemini 3.1 Flash Image Preview（最新）</option>
+            <option value="models/nano-banana-pro-preview"     ${S.imgModel==='models/nano-banana-pro-preview'?'selected':''}>Nano Banana Pro Preview</option>
+          </optgroup>
+          <optgroup label="🖼️ Imagen 系列（高质量）">
+            <option value="models/imagen-4.0-generate-001"    ${S.imgModel==='models/imagen-4.0-generate-001'?'selected':''}>Imagen 4.0（旗舰）</option>
+            <option value="models/imagen-4.0-ultra-generate-001" ${S.imgModel==='models/imagen-4.0-ultra-generate-001'?'selected':''}>Imagen 4.0 Ultra（最高质量）</option>
+            <option value="models/imagen-4.0-fast-generate-001" ${S.imgModel==='models/imagen-4.0-fast-generate-001'?'selected':''}>Imagen 4.0 Fast（快速版）</option>
+          </optgroup>
         </select>
-        <div class="settings-hint">图片生成使用 Gemini Imagen 模型。建议使用默认模型。</div>
+        <div class="settings-hint">用于批量生成产品图片。<strong>Gemini 2.5 Flash Image</strong> 无需额外配额，Imagen 系列画质更高但需要确认账号权限。</div>
+      </div>
+      <!-- Model comparison table -->
+      <div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">📊 模型速查对比</div>
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <tr style="background:#f1f5f9"><th style="padding:5px 8px;text-align:left;border-bottom:1px solid var(--border)">模型</th><th style="padding:5px 8px;text-align:center;border-bottom:1px solid var(--border)">质量</th><th style="padding:5px 8px;text-align:center;border-bottom:1px solid var(--border)">速度</th><th style="padding:5px 8px;text-align:center;border-bottom:1px solid var(--border)">配额消耗</th></tr>
+          <tr><td style="padding:5px 8px;border-bottom:1px solid #f1f5f9">Gemini 3.1 Pro Preview</td><td style="padding:5px 8px;text-align:center;color:var(--green);border-bottom:1px solid #f1f5f9">★★★★★</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #f1f5f9">慢</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #f1f5f9">高</td></tr>
+          <tr style="background:#fffbeb"><td style="padding:5px 8px;border-bottom:1px solid #f1f5f9"><strong>Gemini 2.5 Flash ⭐</strong></td><td style="padding:5px 8px;text-align:center;color:var(--green);border-bottom:1px solid #f1f5f9">★★★★</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #f1f5f9">快</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #f1f5f9">中</td></tr>
+          <tr><td style="padding:5px 8px;border-bottom:1px solid #f1f5f9">Gemini 2.5 Pro</td><td style="padding:5px 8px;text-align:center;color:var(--green);border-bottom:1px solid #f1f5f9">★★★★★</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #f1f5f9">中</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #f1f5f9">高</td></tr>
+          <tr><td style="padding:5px 8px;border-bottom:1px solid #f1f5f9">Gemini 2.5 Flash-Lite</td><td style="padding:5px 8px;text-align:center;border-bottom:1px solid #f1f5f9">★★★</td><td style="padding:5px 8px;text-align:center;color:var(--green);border-bottom:1px solid #f1f5f9">极快</td><td style="padding:5px 8px;text-align:center;color:var(--green);border-bottom:1px solid #f1f5f9">低</td></tr>
+          <tr><td style="padding:5px 8px">Gemini 2.0 Flash</td><td style="padding:5px 8px;text-align:center">★★★</td><td style="padding:5px 8px;text-align:center;color:var(--green)">极快</td><td style="padding:5px 8px;text-align:center;color:var(--green)">低</td></tr>
+        </table>
       </div>
       <button class="btn btn-blue" onclick="saveSettings()">💾 保存配置</button>
     </div>
@@ -1056,8 +1143,10 @@ function renderSettings(el) {
 function saveSettings() {
   S.apiKey = document.getElementById('apiKeyIn').value.trim();
   S.model = document.getElementById('modelIn').value;
+  S.imgModel = document.getElementById('imgModelIn').value;
   localStorage.setItem('alc_apikey', S.apiKey);
   localStorage.setItem('alc_model', S.model);
+  localStorage.setItem('alc_imgmodel', S.imgModel);
   renderSettings(document.getElementById('tabBody'));
   showToast('✓ 配置已保存', 'success');
 }
@@ -1297,24 +1386,48 @@ async function doGenerateImages(prompts) {
 }
 
 async function generateOneImage(promptText) {
-  const imageModel = 'gemini-2.0-flash-exp-image-generation';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:generateContent?key=${S.apiKey}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: promptText + '\n\nCreate a professional, high-quality e-commerce product photography image. Make it photorealistic, well-lit, and suitable for Amazon listing.' }] }],
-      generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
-    })
-  });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.error?.message || `HTTP ${res.status}`);
+  const model = S.imgModel || 'models/gemini-2.5-flash-image';
+  const isImagen = model.includes('imagen');
+
+  if (isImagen) {
+    // Imagen uses predict endpoint
+    const url = `https://generativelanguage.googleapis.com/v1beta/${model}:predict?key=${S.apiKey}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        instances: [{ prompt: promptText + '\nProfessional e-commerce product photography, high quality, photorealistic.' }],
+        parameters: { sampleCount: 1 }
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    const b64 = data.predictions?.[0]?.bytesBase64Encoded;
+    if (!b64) throw new Error('No image returned from Imagen');
+    return `data:image/png;base64,${b64}`;
+  } else {
+    // Gemini native image generation
+    const url = `https://generativelanguage.googleapis.com/v1beta/${model}:generateContent?key=${S.apiKey}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: promptText + '\n\nCreate a professional, high-quality e-commerce product photography image. Make it photorealistic, well-lit, and suitable for Amazon listing.' }] }],
+        generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    const imgPart = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+    if (!imgPart) throw new Error('No image returned');
+    return `data:${imgPart.inlineData.mimeType};base64,${imgPart.inlineData.data}`;
   }
-  const data = await res.json();
-  const imgPart = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-  if (!imgPart) throw new Error('No image returned');
-  return `data:${imgPart.inlineData.mimeType};base64,${imgPart.inlineData.data}`;
 }
 
 // --- One-click all ---
@@ -1327,7 +1440,9 @@ async function generateAll() {
 // --- Gemini Text API ---
 async function callGeminiText(parts) {
   if (!S.apiKey) throw new Error('请在设置页面配置 Gemini API Key');
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${S.model}:generateContent?key=${S.apiKey}`;
+  // Support both "models/xxx" and bare "xxx" model names
+  const modelPath = S.model.startsWith('models/') ? S.model : `models/${S.model}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/${modelPath}:generateContent?key=${S.apiKey}`;
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1399,6 +1514,379 @@ function downloadImg(src, label) {
 function saveAllImages() {
   S.generatedImages.filter(g => g.url).forEach(g => downloadImg(g.url, g.label));
   showToast(`⬇ 开始下载 ${S.generatedImages.filter(g=>g.url).length} 张图片`, 'success');
+}
+
+// ╔══════════════════════════════════════╗
+// ║     BATCH IMPORT (Excel / CSV)      ║
+// ╚══════════════════════════════════════╝
+
+// State for batch
+const BS = {
+  rows: [],          // parsed rows from file
+  results: [],       // AI-generated results per row
+  currentRow: -1,    // which row is loaded into main form
+  processing: false,
+};
+
+// ── TEMPLATE DOWNLOAD ──
+function downloadTemplate(type) {
+  const headers = ['产品标题', '产品描述', '目标平台', '品牌', '关键词'];
+  const sample1 = ['Dry Body Brush – Eco-Friendly Natural Bristles', 'Each use encourages cell renewal, leaving your skin soft and luminous.', '亚马逊', 'Essential Aura', 'body brush,exfoliation,eco-friendly'];
+  const sample2 = ['Bamboo Cutting Board Set of 3', 'Premium bamboo cutting boards with juice groove. Lightweight and easy to clean.', '亚马逊', 'KitchenPro', 'cutting board,bamboo,kitchen'];
+
+  if (type === 'csv') {
+    const csv = [headers, sample1, sample2].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'listing_template.csv'; a.click();
+  } else {
+    // Generate minimal Excel-like CSV with .xlsx hint
+    const tsv = [headers, sample1, sample2].map(r => r.join('\t')).join('\n');
+    const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'listing_template_excel.tsv'; a.click();
+  }
+  showToast('✓ 模板已下载', 'success');
+}
+
+// ── RENDER BATCH TAB ──
+function renderBatch(el) {
+  const hasRows = BS.rows.length > 0;
+  const hasResults = BS.results.filter(r => r.done).length > 0;
+
+  el.innerHTML = `
+    <div class="batch-intro">
+      <h3>📊 Excel / CSV 批量导入</h3>
+      <p>上传包含多个产品信息的表格，AI 自动批量生成每个产品的完整 Listing 文案，然后一键导出结果。</p>
+    </div>
+
+    <!-- STEP INDICATORS -->
+    <div class="batch-steps">
+      <div class="batch-step ${!hasRows?'active':''}"><span class="num">📥</span>上传文件</div>
+      <div class="batch-step ${hasRows&&!hasResults?'active':''}"><span class="num">⚡</span>AI批量生成</div>
+      <div class="batch-step ${hasResults?'active':''}"><span class="num">📤</span>导出结果</div>
+    </div>
+
+    <!-- STEP 1: TEMPLATE + UPLOAD -->
+    <div class="tpl-card">
+      <h4>📋 第一步：下载模板 / 上传文件</h4>
+      <p>下载 CSV 或 Excel 模板，按格式填写产品信息后上传。每行代表一个产品。</p>
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px">必填列：</div>
+        <span class="col-badge col-required">产品标题</span>
+        <span class="col-badge col-required">产品描述</span>
+        <div style="font-size:11px;font-weight:700;color:var(--text2);margin:6px 0 5px">可选列（会提升质量）：</div>
+        <span class="col-badge col-optional">目标平台</span>
+        <span class="col-badge col-optional">品牌</span>
+        <span class="col-badge col-optional">关键词</span>
+        <span class="col-badge col-optional">颜色/尺码</span>
+        <span class="col-badge col-optional">材质</span>
+        <span class="col-badge col-optional">价格区间</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <button class="btn btn-ghost" style="width:auto;padding:7px 14px;font-size:12px" onclick="downloadTemplate('csv')">⬇ 下载 CSV 模板</button>
+        <button class="btn btn-ghost" style="width:auto;padding:7px 14px;font-size:12px" onclick="downloadTemplate('xlsx')">⬇ 下载 Excel 模板</button>
+        <button class="btn btn-ghost" style="width:auto;padding:7px 14px;font-size:12px" onclick="loadSampleData()">🧪 载入示例数据</button>
+      </div>
+      <div class="upload-csv-zone ${hasRows?'loaded':''}" id="csvDropZone"
+        onclick="document.getElementById('csvFileIn').click()"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleCsvDrop(event)">
+        ${hasRows
+          ? `<div style="font-size:22px;margin-bottom:6px">✅</div>
+             <div style="font-weight:700;color:var(--green)">已加载 ${BS.rows.length} 个产品</div>
+             <div style="font-size:11px;color:var(--text3);margin-top:3px">点击重新上传</div>`
+          : `<div class="csv-ico">📄</div>
+             <div style="font-weight:600;font-size:13px;margin-bottom:4px">拖放 CSV / Excel 文件至此</div>
+             <div style="font-size:11px;color:var(--text3)">或点击选择文件（支持 .csv、.tsv、.txt）</div>`
+        }
+      </div>
+      <input type="file" id="csvFileIn" accept=".csv,.tsv,.txt,.xls,.xlsx" style="display:none" onchange="handleCsvFile(this)">
+    </div>
+
+    <!-- TABLE PREVIEW (shown after upload) -->
+    ${hasRows ? `
+    <div class="batch-table-wrap">
+      <div class="batch-table-head">
+        <div class="batch-table-title">📋 产品列表 · ${BS.rows.length} 行</div>
+        <div style="display:flex;gap:7px;align-items:center">
+          <span style="font-size:11px;color:var(--text2)">${BS.results.filter(r=>r.done).length} / ${BS.rows.length} 已完成</span>
+          <button class="btn btn-violet" style="width:auto;padding:5px 12px;font-size:11px" onclick="batchGenAllCopy()" ${BS.processing?'disabled':''}>
+            ${BS.processing ? '<span class="spin"></span> 生成中...' : '⚡ 批量AI生成全部'}
+          </button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;max-height:280px;overflow-y:auto">
+        <table class="batch-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>产品标题</th>
+              <th>描述</th>
+              <th>平台</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${BS.rows.map((row, i) => {
+              const res = BS.results[i];
+              const statusHtml = !res
+                ? '<span class="row-status row-pending">待处理</span>'
+                : res.processing
+                  ? '<span class="row-status row-processing">⏳ 处理中</span>'
+                  : res.done
+                    ? '<span class="row-status row-done">✓ 完成</span>'
+                    : '<span class="row-status row-error">✗ 失败</span>';
+              return `<tr>
+                <td>${i+1}</td>
+                <td title="${row['产品标题']||''}">${(row['产品标题']||'').slice(0,30)}${(row['产品标题']||'').length>30?'…':''}</td>
+                <td title="${row['产品描述']||''}">${(row['产品描述']||'').slice(0,25)}…</td>
+                <td>${row['目标平台']||'亚马逊'}</td>
+                <td>${statusHtml}</td>
+                <td style="display:flex;gap:4px">
+                  <button onclick="loadRowToForm(${i})" title="载入到主表单" style="background:var(--primary-l);border:1px solid var(--primary-ll);color:var(--primary);border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer;font-weight:600">载入</button>
+                  <button onclick="genSingleRow(${i})" title="单独生成" style="background:#f3e8ff;border:1px solid #e9d5ff;color:#7c3aed;border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer;font-weight:600">生成</button>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${BS.processing ? `
+      <div style="padding:10px 14px;border-top:1px solid var(--border)">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:4px">正在处理第 ${BS.results.filter(r=>r.done||r.processing).length} / ${BS.rows.length} 个...</div>
+        <div class="batch-progress-bar"><div class="batch-progress-fill" style="width:${Math.round(BS.results.filter(r=>r.done).length/BS.rows.length*100)}%"></div></div>
+      </div>` : ''}
+    </div>` : ''}
+
+    <!-- RESULTS (shown when any done) -->
+    ${hasResults ? `
+    <div class="export-bar">
+      <div class="export-bar-title">✅ ${BS.results.filter(r=>r.done).length} 个产品文案已生成</div>
+      <button class="export-btn export-btn-outline" onclick="exportCsv()">📄 导出 CSV</button>
+      <button class="export-btn export-btn-green" onclick="exportCsv(true)">⬇ 下载完整结果</button>
+    </div>
+    <div style="font-weight:700;font-size:13px;margin-bottom:10px">点击查看/载入结果：</div>
+    ${BS.results.map((r, i) => {
+      if (!r || !r.done) return '';
+      return `<div class="batch-result-card ${BS.currentRow===i?'selected':''}" onclick="viewBatchResult(${i})">
+        <div class="brc-head">
+          <div class="brc-title">${r.data.title||BS.rows[i]['产品标题']||''}</div>
+          <span class="row-status row-done">✓ 完成</span>
+        </div>
+        <div class="brc-body">${(r.data.description||'').replace(/<[^>]+>/g,'').slice(0,120)}...</div>
+        <div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">
+          ${(r.data.bullets||[]).slice(0,3).map(b=>`<span style="background:#f1f5f9;border-radius:4px;padding:2px 7px;font-size:10px">${b.replace(/\*\*/g,'').slice(0,40)}</span>`).join('')}
+        </div>
+      </div>`;
+    }).join('')}` : ''}
+  `;
+}
+
+// ── CSV PARSING ──
+function handleCsvDrop(e) {
+  e.preventDefault();
+  document.getElementById('csvDropZone').classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f) parseCsvFile(f);
+}
+
+function handleCsvFile(input) {
+  const f = input.files[0];
+  if (f) parseCsvFile(f);
+  input.value = '';
+}
+
+function parseCsvFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const text = e.target.result;
+    const rows = parseCSV(text);
+    if (rows.length < 2) { showToast('文件格式错误或内容为空', 'error'); return; }
+    const headers = rows[0].map(h => h.trim());
+    BS.rows = rows.slice(1).filter(r => r.some(c => c.trim())).map(r => {
+      const obj = {};
+      headers.forEach((h, i) => { obj[h] = (r[i] || '').trim(); });
+      return obj;
+    });
+    BS.results = BS.rows.map(() => null);
+    BS.currentRow = -1;
+    showToast(`✓ 已加载 ${BS.rows.length} 个产品`, 'success');
+    renderBatch(document.getElementById('tabBody'));
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function parseCSV(text) {
+  // Handle both CSV (comma) and TSV (tab)
+  const delimiter = text.includes('\t') ? '\t' : ',';
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  return lines.map(line => {
+    if (delimiter === '\t') return line.split('\t').map(c => c.replace(/^"|"$/g, ''));
+    // Handle quoted CSV
+    const result = []; let cur = ''; let inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQ = !inQ; continue; }
+      if (ch === ',' && !inQ) { result.push(cur); cur = ''; continue; }
+      cur += ch;
+    }
+    result.push(cur);
+    return result;
+  });
+}
+
+// ── LOAD SAMPLE ──
+function loadSampleData() {
+  BS.rows = [
+    {'产品标题':'Dry Body Brush – Eco-Friendly Natural Bristles for Exfoliation','产品描述':'Natural bristle dry body brush for lymphatic drainage and exfoliation. Eco-friendly sustainably sourced wood handle.','目标平台':'亚马逊','品牌':'Essential Aura','关键词':'body brush,exfoliation,eco-friendly,lymphatic'},
+    {'产品标题':'Bamboo Cutting Board Set of 3 with Juice Groove','产品描述':'Premium bamboo cutting boards in 3 sizes. Features juice groove to catch liquids. Lightweight, easy to clean, eco-friendly.','目标平台':'亚马逊','品牌':'KitchenPro','关键词':'cutting board,bamboo,kitchen,set of 3'},
+    {'产品标题':'LED Desk Lamp with Wireless Charging Pad and USB Port','产品描述':'Modern desk lamp with built-in 10W wireless charging pad. 5 brightness levels, 3 color modes, touch control. Perfect for home office.','目标平台':'亚马逊','品牌':'LumiDesk','关键词':'desk lamp,wireless charging,LED,home office'},
+    {'产品标题':'Stainless Steel Water Bottle 32oz Insulated Double Wall','产品描述':'32oz double-wall vacuum insulated water bottle. Keeps drinks cold 24h, hot 12h. Leak-proof lid, wide mouth, BPA-free.','目标平台':'亚马逊','品牌':'HydroVault','关键词':'water bottle,insulated,stainless steel,32oz'},
+  ];
+  BS.results = BS.rows.map(() => null);
+  BS.currentRow = -1;
+  showToast('✓ 示例数据已加载（4个产品）', 'success');
+  renderBatch(document.getElementById('tabBody'));
+}
+
+// ── LOAD ROW INTO MAIN FORM ──
+function loadRowToForm(i) {
+  const row = BS.rows[i];
+  BS.currentRow = i;
+  S.productTitle = row['产品标题'] || '';
+  S.productDesc = row['产品描述'] || '';
+  S.platform = row['目标平台'] || '亚马逊';
+  document.getElementById('productTitle').value = S.productTitle;
+  document.getElementById('productDesc').value = S.productDesc;
+  document.getElementById('platform').value = S.platform;
+  showToast(`✓ 已载入第 ${i+1} 行产品，可切换到「文案结果」查看`, 'success');
+}
+
+// ── VIEW RESULT ──
+function viewBatchResult(i) {
+  const res = BS.results[i];
+  if (!res?.done) return;
+  BS.currentRow = i;
+  S.copyResult = res.data;
+  loadRowToForm(i);
+  switchTab('copy');
+  showToast(`✓ 已载入第 ${i+1} 行产品结果`, 'success');
+}
+
+// ── GENERATE SINGLE ROW ──
+async function genSingleRow(i) {
+  if (!S.apiKey) { showToast('请先在设置中配置 API Key', 'error'); switchTab('settings'); return; }
+  BS.results[i] = { processing: true, done: false };
+  renderBatch(document.getElementById('tabBody'));
+  try {
+    const row = BS.rows[i];
+    const result = await genListingForRow(row);
+    BS.results[i] = { processing: false, done: true, data: result };
+    showToast(`✓ 第 ${i+1} 行生成成功`, 'success');
+  } catch(e) {
+    BS.results[i] = { processing: false, done: false, error: e.message };
+    showToast(`第 ${i+1} 行失败: ${e.message}`, 'error');
+  }
+  renderBatch(document.getElementById('tabBody'));
+}
+
+// ── BATCH GENERATE ALL ──
+async function batchGenAllCopy() {
+  if (!S.apiKey) { showToast('请先在设置中配置 API Key', 'error'); switchTab('settings'); return; }
+  if (!BS.rows.length) { showToast('请先上传产品数据文件', 'error'); return; }
+  BS.processing = true;
+  renderBatch(document.getElementById('tabBody'));
+
+  for (let i = 0; i < BS.rows.length; i++) {
+    if (BS.results[i]?.done) continue; // skip already done
+    BS.results[i] = { processing: true, done: false };
+    renderBatch(document.getElementById('tabBody'));
+    try {
+      const result = await genListingForRow(BS.rows[i]);
+      BS.results[i] = { processing: false, done: true, data: result };
+    } catch(e) {
+      BS.results[i] = { processing: false, done: false, error: e.message };
+    }
+    renderBatch(document.getElementById('tabBody'));
+    // Small delay to avoid rate limiting
+    if (i < BS.rows.length - 1) await new Promise(r => setTimeout(r, 800));
+  }
+
+  BS.processing = false;
+  const ok = BS.results.filter(r => r?.done).length;
+  showToast(`✓ 批量生成完成：${ok}/${BS.rows.length} 成功`, ok === BS.rows.length ? 'success' : 'info');
+  renderBatch(document.getElementById('tabBody'));
+}
+
+// ── AI GENERATE FOR ONE ROW ──
+async function genListingForRow(row) {
+  const title = row['产品标题'] || '';
+  const desc = row['产品描述'] || '';
+  const platform = row['目标平台'] || '亚马逊';
+  const brand = row['品牌'] || '';
+  const kw = row['关键词'] || '';
+  const material = row['材质'] || '';
+  const color = row['颜色/尺码'] || '';
+
+  const prompt = `你是专业的${platform}电商文案专家。
+
+产品标题：${title}
+产品描述：${desc}
+${brand ? `品牌：${brand}` : ''}
+${kw ? `关键词：${kw}` : ''}
+${material ? `材质：${material}` : ''}
+${color ? `颜色/尺码：${color}` : ''}
+目标平台：${platform}
+
+请生成完整Listing文案，返回JSON：
+{
+  "title": "优化标题（含核心关键词，200字符内）",
+  "optimizedTitle": "SEO优化标题（含更多长尾词）",
+  "bullets": ["**特性1:** 描述", "**特性2:** 描述", "**特性3:** 描述", "**特性4:** 描述", "**特性5:** 描述"],
+  "description": "产品描述（150-300字，中文，突出核心价值和使用场景）"
+}
+
+只返回有效JSON，不要markdown格式。`;
+
+  const resp = await callGeminiText([{ text: prompt }]);
+  const clean = resp.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+// ── EXPORT CSV ──
+function exportCsv(full = false) {
+  const done = BS.results.map((r, i) => ({ row: BS.rows[i], res: r })).filter(x => x.res?.done);
+  if (!done.length) { showToast('没有可导出的结果', 'error'); return; }
+
+  const headers = ['序号', '原始标题', '优化标题', 'SEO标题', '卖点1', '卖点2', '卖点3', '卖点4', '卖点5', '产品描述'];
+  const csvRows = done.map((x, idx) => {
+    const { row, res } = x;
+    const d = res.data;
+    const bullets = d.bullets || [];
+    return [
+      idx + 1,
+      row['产品标题'] || '',
+      d.title || '',
+      d.optimizedTitle || '',
+      bullets[0] || '',
+      bullets[1] || '',
+      bullets[2] || '',
+      bullets[3] || '',
+      bullets[4] || '',
+      (d.description || '').replace(/\n/g, ' '),
+    ].map(c => `"${String(c).replace(/"/g, '""')}"`);
+  });
+
+  const csv = '\uFEFF' + [headers.map(h => `"${h}"`), ...csvRows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `listing_results_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast(`✓ 已导出 ${done.length} 条结果`, 'success');
 }
 
 // ╔══════════════════════════════════════╗
