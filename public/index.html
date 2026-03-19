@@ -2128,7 +2128,8 @@ const CS = {
   result: null,
   activeSubTab: 'relations',
   running: false,
-  generatedImages: {},   // key: 'main_0', 'aplus_1' etc.
+  generatedImages: {},
+  refImages: [],
   generatingMain: false,
   generatingAplus: false,
 };
@@ -2356,108 +2357,138 @@ function setCosmoTab(tab) {
 }
 
 // ── COSMO IMAGE PLAN RENDER ──
+// Ref images state
+function handleRefImgUpload(input) {
+  if (!CS.refImages) CS.refImages = [];
+  const files = Array.from(input.files);
+  const remaining = 9 - CS.refImages.length;
+  files.slice(0, remaining).forEach(f => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      CS.refImages.push({ name: f.name, data: e.target.result, file: f });
+      renderCosmo(document.getElementById('tabBody'));
+    };
+    reader.readAsDataURL(f);
+  });
+  input.value = '';
+}
+
+function removeRefImg(i) {
+  CS.refImages.splice(i, 1);
+  renderCosmo(document.getElementById('tabBody'));
+}
+
+function buildLockedPrompt(originalPrompt, hasRef) {
+  if (!hasRef) return originalPrompt;
+  return 'CRITICAL PRODUCT CONSISTENCY: The product in this image must be 100% identical to the reference product photo — same exact shape, color, material texture, design details, labels, stitching, proportions. Do NOT alter or reimagine the product in any way. Only the background, lighting, and scene context should change. Photorealistic, professional e-commerce photography. ' + originalPrompt;
+}
+
 function renderCosmoImages(r) {
+  if (!CS.refImages) CS.refImages = [];
   const img = r.image_plan || {};
-  const mainShots   = img.main_shots   || [];
-  const aplusShots  = img.aplus_shots  || [];
-  const genImages   = CS.generatedImages || {};
+  const mainShots  = img.main_shots  || [];
+  const aplusShots = img.aplus_shots || [];
+  const genImages  = CS.generatedImages || {};
+  const refImgs    = CS.refImages;
+  const hasRef     = refImgs.length > 0;
+
+  const gridCells = refImgs.map((img, i) => `
+    <div style="position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#1e293b;border:2px solid ${i===0?'rgba(59,130,246,.6)':'rgba(255,255,255,.1)'}">
+      <img src="${img.data}" style="width:100%;height:100%;object-fit:cover">
+      <button onclick="removeRefImg(${i})" style="position:absolute;top:3px;right:3px;width:18px;height:18px;background:rgba(0,0,0,.7);color:white;border:none;border-radius:50%;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0">×</button>
+      ${i===0?'<div style="position:absolute;bottom:0;left:0;right:0;background:rgba(37,99,235,.85);color:white;font-size:9px;font-weight:700;text-align:center;padding:2px">主参考图</div>':''}
+    </div>`).join('');
+
+  const addCell = refImgs.length < 9 ? `
+    <div onclick="document.getElementById('refImgInput').click()" style="aspect-ratio:1;border:2px dashed rgba(255,255,255,.25);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:rgba(255,255,255,.6);font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='rgba(255,255,255,.6)';this.style.color='white'" onmouseout="this.style.borderColor='rgba(255,255,255,.25)';this.style.color='rgba(255,255,255,.6)'">
+      <div style="font-size:22px">＋</div>
+      <div>添加图片</div>
+      <div style="font-size:9px;opacity:.7">${refImgs.length}/9</div>
+    </div>` : '';
+
+  const makeCard = (shot, i, type) => {
+    const key = `${type}_${i}`;
+    const idPfx = type === 'main' ? 'mainPrompt' : 'aplusPrompt';
+    const isMain = type === 'main';
+    const numColor = isMain ? 'linear-gradient(135deg,#2563eb,#0d9488)' : 'linear-gradient(135deg,#7c3aed,#a855f7)';
+    const lockedPrompt = buildLockedPrompt(shot.prompt, hasRef);
+    const genBtnColor = isMain ? '' : 'background:linear-gradient(135deg,#7c3aed,#a855f7)';
+    const btnLabel = genImages[key]?.loading ? '<span class="spin"></span> 生成中...' : hasRef ? '\uD83D\uDDBC\uFE0F 图生图（参考原图）' : '⚡ 立即生成';
+
+    return `<div class="cosmo-img-plan-card">
+      <div class="cosmo-img-plan-head">
+        <div class="cosmo-img-plan-num" style="background:${numColor}">${isMain ? '主图'+(i+1) : 'A+'+(i+1)}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:12px">${shot.title}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">
+            ${!isMain ? '<code style="background:#f3e8ff;padding:1px 5px;border-radius:3px">'+shot.module_type+'</code> · ' : ''}
+            COSMO: <code style="background:#f1f5f9;padding:1px 5px;border-radius:3px">${shot.cosmo_relation}</code>
+          </div>
+        </div>
+        <span class="cosmo-img-ratio-badge" style="${!isMain?'background:#f3e8ff;color:#7c3aed':''}">${shot.ratio || (isMain?'1:1':'21:9')}</span>
+      </div>
+      <div class="cosmo-img-plan-body">
+        <div class="cosmo-img-plan-desc">${shot.description}</div>
+        <div class="cosmo-img-plan-meta">
+          <span>🎨 ${shot.style}</span>
+          ${isMain ? '<span>💡 '+shot.lighting+'</span><span>📐 '+shot.composition+'</span>' : '<span>📐 '+(shot.dimensions||'满宽')+'</span><span>🎯 '+shot.goal+'</span>'}
+        </div>
+        <div style="font-size:10px;font-weight:700;color:var(--text2);margin:6px 0 3px">Prompt${hasRef?' (含产品锁定指令)':''}：</div>
+        <div class="cosmo-img-prompt-box" id="${idPfx}${i}">${lockedPrompt}</div>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+          <button class="cosmo-gen-btn" style="${genBtnColor}" onclick="genCosmoSingleImage('${type}',${i})" ${genImages[key]?.loading?'disabled':''}>${btnLabel}</button>
+          <button class="cosmo-copy-prompt-btn" onclick="copyCosmoPrompt('${idPfx}${i}')">📋 复制Prompt</button>
+        </div>
+        ${genImages[key]?.url ? `<div style="margin-top:10px">
+          <img src="${genImages[key].url}" style="width:100%;border-radius:8px;cursor:pointer;max-height:${isMain?'300':'220'}px;object-fit:contain;background:#f8fafc;border:1px solid var(--border)" onclick="openLightbox('${genImages[key].url}')">
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button onclick="downloadImg('${genImages[key].url}','COSMO_${isMain?'主图':'A+图'}${i+1}')" style="flex:1;padding:6px;background:#f8fafc;border:1px solid var(--border);border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600">⬇ 下载</button>
+            <button onclick="genCosmoSingleImage('${type}',${i})" style="flex:1;padding:6px;background:${isMain?'var(--primary-l)':'#f3e8ff'};border:1px solid ${isMain?'var(--primary-ll)':'#e9d5ff'};color:${isMain?'var(--primary)':'#7c3aed'};border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600">🔄 重新生成</button>
+          </div>
+        </div>` : ''}
+        ${genImages[key]?.error ? `<div style="color:var(--red);font-size:11px;margin-top:6px;padding:6px 8px;background:#fee2e2;border-radius:5px">❌ ${genImages[key].error} <button onclick="genCosmoSingleImage('${type}',${i})" style="margin-left:8px;padding:2px 8px;background:var(--red);color:white;border:none;border-radius:4px;font-size:10px;cursor:pointer;font-family:inherit">重试</button></div>` : ''}
+      </div>
+    </div>`;
+  };
+
+  const mainCards  = mainShots.map((s,i)  => makeCard(s, i, 'main')).join('');
+  const aplusCards = aplusShots.map((s,i) => makeCard(s, i, 'aplus')).join('');
+  const savedCount = Object.values(genImages).filter(g => g?.url).length;
 
   return `
-    <!-- MAIN SHOTS PLAN -->
+    <div style="background:linear-gradient(135deg,#0f172a,#1e3a8a);border-radius:12px;padding:16px;margin-bottom:14px;color:white">
+      <div style="font-size:14px;font-weight:800;margin-bottom:5px">🖼️ 第一步：上传产品参考图（图生图 · 保持产品一致）</div>
+      <div style="font-size:12px;opacity:.8;margin-bottom:12px;line-height:1.6">上传你的产品原图（最多9张），AI 生图时会严格参考这些图片，100% 保留产品外观、颜色、细节，只改变背景和场景。</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+        ${gridCells}${addCell}
+      </div>
+      <input type="file" id="refImgInput" accept="image/*" multiple style="display:none" onchange="handleRefImgUpload(this)">
+      ${hasRef
+        ? `<div style="background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.4);border-radius:8px;padding:8px 12px;font-size:11px;display:flex;align-items:center;gap:6px">✅ 已上传 ${refImgs.length} 张参考图，生图时 AI 将严格还原产品外观${refImgs.length>1?' · 以第1张为主参考':''}</div>`
+        : `<div style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);border-radius:8px;padding:8px 12px;font-size:11px;display:flex;align-items:center;gap:6px">⚠️ 未上传参考图 · 建议上传产品图片以保持生成一致性</div>`}
+    </div>
+
     <div class="cosmo-insight-card" style="margin-bottom:12px">
-      <div class="cosmo-insight-title">📷 主图方案（基于 COSMO Search-Buy 意图）
-        <span style="font-size:10px;font-weight:400;color:var(--text2);margin-left:6px">共 ${mainShots.length} 张</span>
+      <div class="cosmo-insight-title">📷 主图方案（Search-Buy 意图）<span style="font-size:10px;font-weight:400;color:var(--text2);margin-left:6px">${mainShots.length} 张</span>${hasRef?'<span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;margin-left:auto">✅ 图生图模式</span>':''}</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;padding:8px;background:#eff6ff;border-radius:6px;line-height:1.6">💡 覆盖 <code>used_for_func</code>、<code>used_for_eve</code>、<code>xIs_a</code> 关系，让用户第一眼产生点击冲动。</div>
+      ${mainCards}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+        <button class="cosmo-run-btn" style="background:linear-gradient(135deg,#2563eb,#0d9488);margin:0" onclick="genAllCosmoMain()">${CS.generatingMain?'<span class="spin"></span> 生成中...':'🖼️ 批量生成全部主图'}</button>
+        <button class="cosmo-run-btn" style="background:#0f172a;margin:0" onclick="saveCosmoTypeImages('main')">⬇ 保存全部主图</button>
       </div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;padding:8px;background:#eff6ff;border-radius:6px;line-height:1.6">
-        💡 <strong>设计依据：</strong>主图需要覆盖用户的搜索-购买意图（Search-Buy），让用户在搜索结果页第一眼就产生点击冲动。基于 COSMO 分析，以下方案分别对应不同的 <code>used_for_func</code>、<code>xWant</code>、<code>used_for_aud</code> 关系。
-      </div>
-      ${mainShots.map((shot, i) => `
-      <div class="cosmo-img-plan-card" id="mainPlan${i}">
-        <div class="cosmo-img-plan-head">
-          <div class="cosmo-img-plan-num">主图${i+1}</div>
-          <div style="flex:1">
-            <div style="font-weight:700;font-size:12px">${shot.title}</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:2px">COSMO关系：<code style="background:#f1f5f9;padding:1px 5px;border-radius:3px">${shot.cosmo_relation}</code></div>
-          </div>
-          <span class="cosmo-img-ratio-badge">${shot.ratio || '1:1'}</span>
-        </div>
-        <div class="cosmo-img-plan-body">
-          <div class="cosmo-img-plan-desc">${shot.description}</div>
-          <div class="cosmo-img-plan-meta">
-            <span>🎨 风格：${shot.style}</span>
-            <span>💡 光线：${shot.lighting}</span>
-            <span>📐 构图：${shot.composition}</span>
-          </div>
-          <div class="cosmo-img-prompt-box" id="mainPrompt${i}">${shot.prompt}</div>
-          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-            <button class="cosmo-gen-btn" onclick="genCosmoSingleImage('main',${i})">
-              ${genImages['main_'+i]?.loading ? '<span class="spin"></span> 生成中...' : '⚡ 立即生成'}
-            </button>
-            <button class="cosmo-copy-prompt-btn" onclick="copyCosmoPrompt('mainPrompt${i}')">📋 复制Prompt</button>
-          </div>
-          ${genImages['main_'+i]?.url ? `
-          <div style="margin-top:10px">
-            <img src="${genImages['main_'+i].url}" style="width:100%;border-radius:8px;cursor:pointer;max-height:280px;object-fit:contain;background:#f8fafc" onclick="openLightbox('${genImages['main_'+i].url}')">
-            <button onclick="downloadImg('${genImages['main_'+i].url}','COSMO_主图${i+1}')" style="margin-top:6px;width:100%;padding:5px;background:#f8fafc;border:1px solid var(--border);border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit">⬇ 下载</button>
-          </div>` : ''}
-          ${genImages['main_'+i]?.error ? `<div style="color:var(--red);font-size:11px;margin-top:6px">❌ ${genImages['main_'+i].error}</div>` : ''}
-        </div>
-      </div>`).join('')}
-      <button class="cosmo-run-btn" style="margin-top:4px;background:linear-gradient(135deg,#2563eb,#0d9488)" onclick="genAllCosmoMain()">
-        ${CS.generatingMain ? '<span class="spin"></span> 批量生成主图中...' : '🖼️ 批量生成全部主图'}
-      </button>
     </div>
 
-    <!-- A+ SHOTS PLAN -->
     <div class="cosmo-insight-card">
-      <div class="cosmo-insight-title">✨ A+图片方案（基于 COSMO Co-Buy 意图）
-        <span style="font-size:10px;font-weight:400;color:var(--text2);margin-left:6px">共 ${aplusShots.length} 张</span>
+      <div class="cosmo-insight-title">✨ A+图方案（Co-Buy 意图）<span style="font-size:10px;font-weight:400;color:var(--text2);margin-left:6px">${aplusShots.length} 张</span>${hasRef?'<span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;margin-left:auto">✅ 图生图模式</span>':''}</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;padding:8px;background:#f3e8ff;border-radius:6px;line-height:1.6">💡 覆盖 <code>xWant</code> 深层意图和 Co-Buy 场景，展示产品完整生活价值，促进连带购买。</div>
+      ${aplusCards}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+        <button class="cosmo-run-btn" style="background:linear-gradient(135deg,#7c3aed,#e11d48);margin:0" onclick="genAllCosmoAplus()">${CS.generatingAplus?'<span class="spin"></span> 生成中...':'✨ 批量生成全部A+图'}</button>
+        <button class="cosmo-run-btn" style="background:#0f172a;margin:0" onclick="saveCosmoTypeImages('aplus')">⬇ 保存全部A+图</button>
       </div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;padding:8px;background:#f3e8ff;border-radius:6px;line-height:1.6">
-        💡 <strong>设计依据：</strong>A+图片需要深化用户的购买决策，覆盖 Co-Buy（共同购买）场景和 <code>xWant</code>（深层意图），展示产品在完整生活场景中的价值，促进连带购买。
-      </div>
-      ${aplusShots.map((shot, i) => `
-      <div class="cosmo-img-plan-card" id="aplusPlan${i}">
-        <div class="cosmo-img-plan-head">
-          <div class="cosmo-img-plan-num" style="background:linear-gradient(135deg,#7c3aed,#a855f7)">A+${i+1}</div>
-          <div style="flex:1">
-            <div style="font-weight:700;font-size:12px">${shot.title}</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:2px">模块类型：<code style="background:#f3e8ff;padding:1px 5px;border-radius:3px">${shot.module_type}</code> · COSMO关系：<code style="background:#f1f5f9;padding:1px 5px;border-radius:3px">${shot.cosmo_relation}</code></div>
-          </div>
-          <span class="cosmo-img-ratio-badge" style="background:#f3e8ff;color:#7c3aed">${shot.ratio || '21:9'}</span>
-        </div>
-        <div class="cosmo-img-plan-body">
-          <div class="cosmo-img-plan-desc">${shot.description}</div>
-          <div class="cosmo-img-plan-meta">
-            <span>🎨 风格：${shot.style}</span>
-            <span>📐 尺寸：${shot.dimensions || '桌面满宽'}</span>
-            <span>🎯 目标：${shot.goal}</span>
-          </div>
-          <div class="cosmo-img-prompt-box" id="aplusPrompt${i}">${shot.prompt}</div>
-          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-            <button class="cosmo-gen-btn" style="background:linear-gradient(135deg,#7c3aed,#a855f7)" onclick="genCosmoSingleImage('aplus',${i})">
-              ${genImages['aplus_'+i]?.loading ? '<span class="spin"></span> 生成中...' : '⚡ 立即生成'}
-            </button>
-            <button class="cosmo-copy-prompt-btn" onclick="copyCosmoPrompt('aplusPrompt${i}')">📋 复制Prompt</button>
-          </div>
-          ${genImages['aplus_'+i]?.url ? `
-          <div style="margin-top:10px">
-            <img src="${genImages['aplus_'+i].url}" style="width:100%;border-radius:8px;cursor:pointer;max-height:200px;object-fit:contain;background:#f8fafc" onclick="openLightbox('${genImages['aplus_'+i].url}')">
-            <button onclick="downloadImg('${genImages['aplus_'+i].url}','COSMO_A+图${i+1}')" style="margin-top:6px;width:100%;padding:5px;background:#f8fafc;border:1px solid var(--border);border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit">⬇ 下载</button>
-          </div>` : ''}
-          ${genImages['aplus_'+i]?.error ? `<div style="color:var(--red);font-size:11px;margin-top:6px">❌ ${genImages['aplus_'+i].error}</div>` : ''}
-        </div>
-      </div>`).join('')}
-      <button class="cosmo-run-btn" style="margin-top:4px;background:linear-gradient(135deg,#7c3aed,#e11d48)" onclick="genAllCosmoAplus()">
-        ${CS.generatingAplus ? '<span class="spin"></span> 批量生成A+图中...' : '✨ 批量生成全部A+图'}
-      </button>
     </div>
 
-    <!-- SAVE ALL -->
-    ${Object.values(CS.generatedImages||{}).filter(g=>g?.url).length > 0 ? `
-    <button class="btn btn-dark" style="margin-top:8px" onclick="saveCosmoImages()">
-      🗂️ 一键保存所有已生成图片（${Object.values(CS.generatedImages||{}).filter(g=>g?.url).length}张）
-    </button>` : ''}
+    ${savedCount > 0 ? `<button class="btn btn-dark" style="margin-top:8px;width:100%;padding:10px" onclick="saveCosmoImages()">🗂️ 一键保存所有图片（${savedCount}张）</button>` : ''}
   `;
 }
 
@@ -2481,7 +2512,8 @@ async function genCosmoSingleImage(type, idx) {
   renderCosmo(document.getElementById('tabBody'));
 
   try {
-    const url = await generateOneImage(shot.prompt);
+    const lockedPrompt = buildLockedPrompt(shot.prompt, (CS.refImages||[]).length > 0);
+    const url = await generateCosmoImage(lockedPrompt);
     CS.generatedImages[key] = { loading: false, url };
     showToast(`✓ ${type === 'main' ? '主图' : 'A+图'}${idx+1} 生成成功`, 'success');
   } catch(e) {
@@ -2489,6 +2521,66 @@ async function genCosmoSingleImage(type, idx) {
     showToast(`生成失败: ${e.message}`, 'error');
   }
   renderCosmo(document.getElementById('tabBody'));
+}
+
+// Generate image with optional reference images (image-to-image)
+async function generateCosmoImage(promptText) {
+  const refImgs = CS.refImages || [];
+  const model = S.imgModel || 'models/gemini-2.5-flash-image';
+  const isImagen = model.includes('imagen');
+
+  if (isImagen) {
+    // Imagen doesn't support image input directly, use text only with strong lock
+    const url = `https://generativelanguage.googleapis.com/v1beta/${model}:predict?key=${S.apiKey}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        instances: [{ prompt: promptText }],
+        parameters: { sampleCount: 1 }
+      })
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `HTTP ${res.status}`); }
+    const data = await res.json();
+    const b64 = data.predictions?.[0]?.bytesBase64Encoded;
+    if (!b64) throw new Error('No image returned from Imagen');
+    return `data:image/png;base64,${b64}`;
+  }
+
+  // Gemini native — supports multimodal input (image + text = image-to-image)
+  const parts = [];
+
+  // Add reference images if available (up to 3 to stay within token limits)
+  if (refImgs.length > 0) {
+    const refsToUse = refImgs.slice(0, 3);
+    refsToUse.forEach((ref, i) => {
+      const base64 = ref.data.split(',')[1];
+      const mimeType = ref.data.match(/data:([^;]+)/)?.[1] || 'image/jpeg';
+      parts.push({ inlineData: { mimeType, data: base64 } });
+      if (i === 0) {
+        parts.push({ text: `This is the REFERENCE PRODUCT IMAGE ${i+1} (primary). You must reproduce this exact product with 100% fidelity in the generated image.` });
+      } else {
+        parts.push({ text: `This is REFERENCE PRODUCT IMAGE ${i+1} (additional angle/view of the same product).` });
+      }
+    });
+  }
+
+  parts.push({ text: promptText });
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/${model}:generateContent?key=${S.apiKey}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts }],
+      generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+    })
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `HTTP ${res.status}`); }
+  const data = await res.json();
+  const imgPart = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+  if (!imgPart) throw new Error('No image returned. Try a different image model in Settings.');
+  return `data:${imgPart.inlineData.mimeType};base64,${imgPart.inlineData.data}`;
 }
 
 async function genAllCosmoMain() {
@@ -2505,7 +2597,8 @@ async function genAllCosmoMain() {
     const key = `main_${i}`;
     CS.generatedImages[key] = { loading: true };
     try {
-      const url = await generateOneImage(shots[i].prompt);
+      const lockedPrompt = buildLockedPrompt(shots[i].prompt, (CS.refImages||[]).length > 0);
+      const url = await generateCosmoImage(lockedPrompt);
       CS.generatedImages[key] = { loading: false, url };
     } catch(e) {
       CS.generatedImages[key] = { loading: false, error: e.message };
@@ -2535,7 +2628,8 @@ async function genAllCosmoAplus() {
     const key = `aplus_${i}`;
     CS.generatedImages[key] = { loading: true };
     try {
-      const url = await generateOneImage(shots[i].prompt);
+      const lockedPrompt = buildLockedPrompt(shots[i].prompt, (CS.refImages||[]).length > 0);
+      const url = await generateCosmoImage(lockedPrompt);
       CS.generatedImages[key] = { loading: false, url };
     } catch(e) {
       CS.generatedImages[key] = { loading: false, error: e.message };
@@ -2558,6 +2652,18 @@ function saveCosmoImages() {
     downloadImg(g.url, label);
   });
   showToast('⬇ 开始下载所有图片', 'success');
+}
+
+function saveCosmoTypeImages(type) {
+  const entries = Object.entries(CS.generatedImages).filter(([k]) => k.startsWith(type));
+  if (!entries.some(([,g]) => g?.url)) { showToast('没有已生成的图片', 'info'); return; }
+  entries.forEach(([key, g]) => {
+    if (!g?.url) return;
+    const idx = parseInt(key.split('_')[1]) + 1;
+    const label = type === 'main' ? `COSMO_主图${idx}` : `COSMO_A+图${idx}`;
+    downloadImg(g.url, label);
+  });
+  showToast(`⬇ 开始下载 ${type === 'main' ? '主图' : 'A+图'}`, 'success');
 }
 
 // ── RUN COSMO ANALYSIS ──
