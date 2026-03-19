@@ -2666,6 +2666,58 @@ function saveCosmoTypeImages(type) {
   showToast(`⬇ 开始下载 ${type === 'main' ? '主图' : 'A+图'}`, 'success');
 }
 
+// ── ROBUST JSON PARSER ──
+// Handles common LLM JSON output issues: Chinese brackets, trailing commas,
+// control characters, unescaped quotes, truncation, markdown fences, etc.
+function parseJsonRobust(raw) {
+  if (!raw) return null;
+
+  // Strategy 1: try as-is after stripping markdown fences
+  let cleaned = raw
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```\s*$/, '')
+    .trim();
+
+  // Strategy 2: extract the largest {...} block
+  const match = cleaned.match(/\{[\s\S]*\}/);
+  if (!match) return null;
+  cleaned = match[0];
+
+  // Strategy 3: clean up common LLM JSON issues
+  cleaned = cleaned
+    // Remove control characters (except \n \r \t)
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+    // Replace Chinese/fullwidth quotes with ASCII quotes
+    .replace(/[\u201C\u201D\u201E\u201F\u2033\u2036]/g, '"')
+    .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'")
+    // Replace Chinese brackets that sneak into JSON keys/values
+    .replace(/「/g, '"').replace(/」/g, '"')
+    .replace(/【/g, '[').replace(/】/g, ']')
+    .replace(/（/g, '(').replace(/）/g, ')')
+    // Fix trailing commas before } or ]
+    .replace(/,(\s*[}\]])/g, '$1')
+    // Fix missing commas between items (basic heuristic)
+    .replace(/}(\s*){/g, '},$1{')
+    .replace(/](\s*)\[/g, '],$1[');
+
+  // Strategy 4: try parsing cleaned string
+  try { return JSON.parse(cleaned); } catch(e1) {
+    // Strategy 5: try progressive truncation to find the largest valid prefix
+    // Walk back from end to find a complete JSON object
+    for (let len = cleaned.length; len > 100; len = Math.floor(len * 0.95)) {
+      const sub = cleaned.slice(0, len);
+      // Find last complete-looking closing brace
+      const lastBrace = sub.lastIndexOf('}');
+      if (lastBrace === -1) continue;
+      const candidate = sub.slice(0, lastBrace + 1)
+        .replace(/,(\s*[}\]])/g, '$1'); // fix trailing commas again after truncation
+      try { return JSON.parse(candidate); } catch(e2) { continue; }
+    }
+    console.error('parseJsonRobust failed. Raw:', raw.slice(0, 500));
+    return null;
+  }
+}
+
 // ── RUN COSMO ANALYSIS ──
 async function runCosmoAnalysis() {
   const title = document.getElementById('productTitle').value || S.productTitle;
@@ -2680,192 +2732,187 @@ async function runCosmoAnalysis() {
   showLoading('🧠 COSMO 意图分析中...', '正在模拟亚马逊 COSMO 算法挖掘用户意图');
 
   try {
-    const analysisCtx = S.analysis ? `\n已知产品分析：${JSON.stringify(S.analysis)}` : '';
-    const prompt = `你是亚马逊 COSMO 知识图谱系统（SIGMOD 2024论文）的模拟实现专家。
-请对以下产品进行深度意图分析，完整模拟 COSMO 算法的知识提取流程。
+    const analysisCtx = S.analysis ? `\nProduct analysis context: ${JSON.stringify(S.analysis).slice(0,800)}` : '';
+    // IMPORTANT: prompt uses only ASCII quotes and no special brackets to avoid JSON parse errors
+    const prompt = `You are an Amazon COSMO knowledge graph expert (SIGMOD 2024 paper).
+Analyze this product using the COSMO framework (Search-Buy and Co-Buy user behavior mining).
 
-产品标题：${title}
-产品描述：${desc}
-平台：${S.platform || '亚马逊'}
+Product title: ${title}
+Product description: ${desc}
+Platform: ${S.platform || 'Amazon'}
 ${analysisCtx}
 
-## 分析框架（严格遵循COSMO论文）
-
-COSMO 通过两种用户行为挖掘意图：
-1. **Search-Buy（搜索-购买）**：用户搜了什么关键词最终购买了此产品
-2. **Co-Buy（共同购买）**：用户购买此产品时通常同时购买什么
-
-基于此，请生成完整的 COSMO 知识图谱分析，返回如下 JSON：
+Return ONLY a valid JSON object. Use ONLY straight ASCII double quotes for strings. NO Chinese brackets, NO smart quotes, NO trailing commas, NO comments.
 
 {
   "relations": {
-    "used_for_func": ["功能1","功能2","功能3","功能4"],
-    "used_for_eve": ["场景1","场景2","场景3"],
-    "used_for_aud": ["受众1","受众2","受众3"],
-    "capable_of": ["能力1","能力2","能力3","能力4"],
-    "used_to": ["目的1","目的2","目的3"],
-    "used_as": ["定位1","定位2"],
-    "is_a": ["类别1","类别2"],
-    "used_on": ["时间/季节1","时间/季节2"],
-    "used_in_loc": ["场所1","场所2","场所3"],
-    "used_in_body": ["部位/肤质1","部位/肤质2"],
-    "used_with": ["互补品1","互补品2","互补品3"],
-    "used_by": ["使用者1","使用者2","使用者3"],
-    "xInterested_in": ["兴趣1","兴趣2","兴趣3"],
-    "xIs_a": ["身份1","身份2","身份3"],
-    "xWant": ["深层意图1","深层意图2","深层意图3"]
+    "used_for_func": ["function1","function2","function3"],
+    "used_for_eve": ["event/occasion1","event2","event3"],
+    "used_for_aud": ["audience1","audience2","audience3"],
+    "capable_of": ["capability1","capability2","capability3"],
+    "used_to": ["purpose1","purpose2","purpose3"],
+    "used_as": ["product type1","product type2"],
+    "is_a": ["category1","category2"],
+    "used_on": ["time/season1","time2"],
+    "used_in_loc": ["location1","location2","location3"],
+    "used_in_body": ["body part/skin type1","type2"],
+    "used_with": ["complementary product1","product2","product3"],
+    "used_by": ["user type1","user type2","user type3"],
+    "xInterested_in": ["interest1","interest2","interest3"],
+    "xIs_a": ["user identity1","identity2","identity3"],
+    "xWant": ["deep intent1","intent2","intent3"]
   },
   "search_buy": {
-    "high_conversion_queries": ["高转化搜索词1","搜索词2","搜索词3","搜索词4","搜索词5"],
-    "query_intent_types": ["功能性意图","场景意图","受众意图"],
-    "semantic_gap": "指出产品描述与用户真实搜索意图之间的差距",
-    "broad_query_suggestions": "哪些宽泛模糊的查询最值得优化",
-    "specificity_note": "用户搜索特异性分析（broad/specific）"
+    "high_conversion_queries": ["query1","query2","query3","query4","query5"],
+    "query_intent_types": ["functional intent","situational intent","audience intent"],
+    "semantic_gap": "gap between product description and user real search intent",
+    "broad_query_suggestions": "which broad queries need optimization",
+    "specificity_note": "query specificity analysis"
   },
   "co_buy": {
-    "complementary_products": ["互补品1","互补品2","互补品3","互补品4"],
-    "co_buy_reason": "共同购买的核心原因（common intention背后的逻辑）",
-    "bundle_suggestion": "推荐的产品套装组合及理由",
-    "product_type_pairs": ["产品类型配对1","配对2","配对3"]
+    "complementary_products": ["product1","product2","product3","product4"],
+    "co_buy_reason": "core reason for co-purchasing",
+    "bundle_suggestion": "recommended bundle combination",
+    "product_type_pairs": ["pair1","pair2","pair3"]
   },
   "knowledge_triples": [
-    {"head":"产品名","relation":"used_for_func","tail":"具体功能","type":"search-buy"},
-    {"head":"产品名","relation":"xWant","tail":"用户深层意图","type":"co-buy"},
-    {"head":"产品名","relation":"used_for_aud","tail":"目标用户","type":"search-buy"},
-    {"head":"产品名","relation":"capable_of","tail":"核心能力","type":"co-buy"},
-    {"head":"产品名","relation":"xIs_a","tail":"用户身份","type":"search-buy"},
-    {"head":"产品名","relation":"used_with","tail":"互补品","type":"co-buy"}
+    {"head":"product","relation":"used_for_func","tail":"specific function","type":"search-buy"},
+    {"head":"product","relation":"xWant","tail":"deep user intent","type":"co-buy"},
+    {"head":"product","relation":"used_for_aud","tail":"target user","type":"search-buy"},
+    {"head":"product","relation":"capable_of","tail":"core capability","type":"co-buy"},
+    {"head":"product","relation":"xIs_a","tail":"user identity","type":"search-buy"},
+    {"head":"product","relation":"used_with","tail":"complementary item","type":"co-buy"}
   ],
   "quality_scores": {
-    "plausibility":    0.85,
-    "typicality":      0.78,
-    "specificity":     0.72,
+    "plausibility": 0.85,
+    "typicality": 0.78,
+    "specificity": 0.72,
     "informativeness": 0.80,
-    "completeness":    0.75
+    "completeness": 0.75
   },
-  "score_explanation": "简短说明评分依据（2-3句话）",
+  "score_explanation": "2-3 sentence explanation of scoring rationale",
   "intent_distribution": [
-    {"category":"功能性意图","pct":35},
-    {"category":"场景/活动意图","pct":25},
-    {"category":"受众/用户意图","pct":20},
-    {"category":"共购互补意图","pct":15},
-    {"category":"深层情感意图","pct":5}
+    {"category":"Functional Intent","pct":35},
+    {"category":"Situational Intent","pct":25},
+    {"category":"Audience Intent","pct":20},
+    {"category":"Co-Buy Intent","pct":15},
+    {"category":"Emotional Intent","pct":5}
   ],
   "copy_strategy": {
     "strategies": [
-      "基于used_for_func：在标题开头突出最核心的功能关键词",
-      "基于xWant：在描述中讲述用户的深层故事，从意图出发",
-      "基于used_for_aud：精准定向目标人群，在bullet中直接呼唤",
-      "基于co_buy：在A+页面推荐互补产品，提升连带购买",
-      "基于used_for_eve：强调使用场景，帮助用户产生代入感"
+      "Strategy 1 based on used_for_func relation",
+      "Strategy 2 based on xWant relation",
+      "Strategy 3 based on used_for_aud relation",
+      "Strategy 4 based on co_buy relation",
+      "Strategy 5 based on used_for_eve relation"
     ],
-    "title_suggestion": "解释如何基于COSMO分析优化标题",
-    "suggested_title": "给出一个基于COSMO意图优化的标题示例（英文，200字符内）",
+    "title_suggestion": "how to optimize title based on COSMO analysis",
+    "suggested_title": "optimized product title in English under 200 chars",
     "bullet_framework": [
-      {"focus":"核心功能卖点","rationale":"对应used_for_func关系，解决最大痛点","cosmo_relation":"used_for_func"},
-      {"focus":"用户深层意图","rationale":"对应xWant关系，打动情感","cosmo_relation":"xWant"},
-      {"focus":"目标受众认同","rationale":"对应xIs_a/used_for_aud关系，制造归属感","cosmo_relation":"xIs_a + used_for_aud"},
-      {"focus":"使用场景覆盖","rationale":"对应used_for_eve/used_in_loc关系，扩大使用想象","cosmo_relation":"used_for_eve"},
-      {"focus":"产品能力证明","rationale":"对应capable_of关系，提供具体可信的承诺","cosmo_relation":"capable_of"}
+      {"focus":"Core function selling point","rationale":"addresses main pain point","cosmo_relation":"used_for_func"},
+      {"focus":"Deep user intent","rationale":"emotional resonance","cosmo_relation":"xWant"},
+      {"focus":"Target audience recognition","rationale":"creates belonging","cosmo_relation":"xIs_a"},
+      {"focus":"Usage scenario coverage","rationale":"expands imagination","cosmo_relation":"used_for_eve"},
+      {"focus":"Product capability proof","rationale":"builds trust","cosmo_relation":"capable_of"}
     ],
     "aplus_modules": [
-      {"module":"品牌故事模块","rationale":"呼应xWant深层意图，建立情感连接"},
-      {"module":"使用场景矩阵","rationale":"覆盖used_for_eve中识别的多个场景"},
-      {"module":"对比优势表格","rationale":"突出capable_of中的核心能力优势"},
-      {"module":"互补产品推荐","rationale":"基于co-buy中识别的强关联产品"}
+      {"module":"Brand story module","rationale":"connects with xWant deep intent"},
+      {"module":"Usage scenario matrix","rationale":"covers used_for_eve scenarios"},
+      {"module":"Comparison table","rationale":"highlights capable_of advantages"},
+      {"module":"Complementary product recommendations","rationale":"based on co-buy data"}
     ]
   },
   "image_plan": {
     "main_shots": [
       {
-        "title": "主图1标题（简短，如「白底极简功能展示」）",
+        "title": "Clean white background product shot",
         "cosmo_relation": "used_for_func",
         "ratio": "1:1",
-        "style": "极简白底，产品居中",
-        "lighting": "柔和均匀正面光",
-        "composition": "产品占画面60%，四周留白",
-        "goal": "突出产品外观和核心功能，适合搜索结果缩略图",
-        "description": "一句话说明这张主图想传达的核心信息",
-        "prompt": "完整的英文图片生成Prompt（100-200字），包含：产品描述、背景设置、光线设置、构图方式、风格调性、色调，直接可用于AI图片生成"
+        "style": "minimalist white background, product centered",
+        "lighting": "soft even studio lighting",
+        "composition": "product fills 60% of frame, ample white space",
+        "goal": "highlight product appearance for search thumbnails",
+        "description": "Clean hero shot showing core product features",
+        "prompt": "Professional e-commerce product photography, pure white background, soft diffused studio lighting from top-front, product centered and elevated slightly, clean minimal shadows beneath for definition, composition is clean and minimalist highlighting purity and simplicity. High resolution, sharp details, photorealistic."
       },
       {
-        "title": "主图2标题（如「使用场景生活方式图」）",
+        "title": "Lifestyle usage scenario shot",
         "cosmo_relation": "used_for_eve",
         "ratio": "1:1",
-        "style": "生活场景，自然光",
-        "lighting": "自然侧光，温暖色调",
-        "composition": "人物/道具在场景中使用产品",
-        "goal": "展示真实使用场景，呼应used_for_eve关系中的场景",
-        "description": "一句话说明场景意图",
-        "prompt": "完整英文生成Prompt"
+        "style": "lifestyle scene with natural light",
+        "lighting": "warm natural side light",
+        "composition": "product in realistic usage context",
+        "goal": "show real usage scenario matching used_for_eve relation",
+        "description": "Show the product being used in its primary scenario",
+        "prompt": "Professional lifestyle product photography showing the product in a realistic, aspirational usage setting. Natural warm lighting, shallow depth of field, cozy and inviting atmosphere. The product is prominently featured in a real-world context that resonates with the target customer. Photorealistic, high quality."
       },
       {
-        "title": "主图3标题（如「目标受众场景图」）",
-        "cosmo_relation": "xIs_a + used_for_aud",
+        "title": "Target audience emotional connection shot",
+        "cosmo_relation": "xIs_a",
         "ratio": "1:1",
-        "style": "人物为主，情感共鸣",
-        "lighting": "柔和自然光",
-        "composition": "目标用户群体使用产品",
-        "goal": "精准定向目标受众，制造归属感",
-        "description": "一句话说明受众意图",
-        "prompt": "完整英文生成Prompt"
+        "style": "person-focused, emotional resonance",
+        "lighting": "soft flattering natural light",
+        "composition": "target user group with product",
+        "goal": "precise targeting of audience to create belonging",
+        "description": "Show the ideal customer using or benefiting from the product",
+        "prompt": "Professional lifestyle photography featuring the ideal target customer using the product naturally and authentically. Soft natural lighting, genuine emotion, aspirational but relatable setting. The product is clearly visible and integral to the scene. Photorealistic, warm tones, high quality e-commerce photography."
       }
     ],
     "aplus_shots": [
       {
-        "title": "A+图1标题（如「品牌英雄大图」）",
-        "module_type": "包含文本的高级背景图片",
+        "title": "Brand hero banner",
+        "module_type": "Premium background image with text",
         "cosmo_relation": "xWant",
         "ratio": "21:9",
-        "dimensions": "桌面 1464×600",
-        "style": "品牌调性，高端大气",
-        "goal": "建立品牌情感连接，呼应用户深层意图",
-        "description": "一句话说明这张A+图的核心诉求",
-        "prompt": "完整的英文图片生成Prompt，包含：场景设置、氛围调性、产品与用户关系、色彩方向、文字区域留白建议"
+        "dimensions": "1464x600 desktop",
+        "style": "premium brand aesthetic, high-end",
+        "goal": "establish emotional brand connection with deep user intent",
+        "description": "Full-width hero image conveying brand values and emotional promise",
+        "prompt": "Premium brand hero photography for e-commerce A+ content. Wide cinematic composition (3:1 aspect ratio), sophisticated and aspirational mood. Product featured prominently against a carefully styled background that evokes the lifestyle and emotional benefit. Left or right side has clear space for text overlay. Photorealistic, high-end commercial photography."
       },
       {
-        "title": "A+图2标题（如「核心功能对比图」）",
-        "module_type": "包含文本的高级双图片",
+        "title": "Core features comparison visual",
+        "module_type": "Premium dual image with text",
         "cosmo_relation": "capable_of",
         "ratio": "16:9",
-        "dimensions": "桌面 650×350",
-        "style": "对比清晰，专业感强",
-        "goal": "展示产品核心能力，建立信任",
-        "description": "一句话说明功能展示逻辑",
-        "prompt": "完整英文生成Prompt"
+        "dimensions": "650x350 desktop",
+        "style": "clean, professional, feature-focused",
+        "goal": "demonstrate core product capabilities and build trust",
+        "description": "Side-by-side or annotated visual highlighting key product features",
+        "prompt": "Clean professional product photography for feature highlight. Well-lit product on neutral background with space for text annotations. Shows product details and key functional features clearly. Multiple angles or close-up details if helpful. Clinical precision with warmth. Photorealistic commercial photography."
       },
       {
-        "title": "A+图3标题（如「使用场景矩阵图」）",
-        "module_type": "使用场景展示",
-        "cosmo_relation": "used_for_eve + used_in_loc",
+        "title": "Usage scenario matrix",
+        "module_type": "Usage scenario display",
+        "cosmo_relation": "used_for_eve",
         "ratio": "21:9",
-        "dimensions": "桌面 970×300",
-        "style": "多场景拼接，生活化",
-        "goal": "覆盖多个使用场景，扩大用户想象空间",
-        "description": "一句话说明场景覆盖策略",
-        "prompt": "完整英文生成Prompt"
+        "dimensions": "970x300 desktop",
+        "style": "multi-scene collage, lifestyle",
+        "goal": "cover multiple usage scenarios to expand customer imagination",
+        "description": "Wide panoramic showing product across different contexts and occasions",
+        "prompt": "Wide cinematic lifestyle photography showing the product in multiple complementary usage scenarios. Consistent color palette and mood throughout. Natural settings that feel authentic and aspirational. Product clearly visible in each context. Photorealistic, high quality commercial photography."
       },
       {
-        "title": "A+图4标题（如「互补搭配图」）",
-        "module_type": "产品搭配推荐",
-        "cosmo_relation": "used_with（Co-Buy）",
+        "title": "Complementary product bundle shot",
+        "module_type": "Product pairing recommendation",
+        "cosmo_relation": "used_with",
         "ratio": "16:9",
-        "dimensions": "桌面 650×350",
-        "style": "整洁陈列，搭配感强",
-        "goal": "展示共购场景，促进连带购买",
-        "description": "一句话说明搭配组合逻辑",
-        "prompt": "完整英文生成Prompt"
+        "dimensions": "650x350 desktop",
+        "style": "clean arrangement, pairing focus",
+        "goal": "show co-buy scenario to encourage bundle purchasing",
+        "description": "Styled flat lay or arrangement showing the product with complementary items",
+        "prompt": "Professional product flat lay photography showing the main product alongside complementary items that are commonly purchased together. Clean neutral background, organized and visually appealing arrangement, soft even lighting. Each product clearly visible. Suggests a complete solution or lifestyle. Photorealistic, commercial quality."
       }
     ]
   }
 }
 
-只返回JSON对象，不要任何markdown或额外说明。所有数组至少3个元素，内容要具体针对这个产品，image_plan中的每个prompt必须是完整的、可直接用于AI图片生成的英文提示词（100-200字）。`;
+Return ONLY the JSON above filled with real content for this specific product. All string values must use straight ASCII double quotes. No Chinese special characters in JSON strings.`;
+
 
     const resp = await callGeminiText([{ text: prompt }]);
-    const jsonMatch = resp.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('AI 返回格式错误');
-    CS.result = JSON.parse(jsonMatch[0]);
+    CS.result = parseJsonRobust(resp);
+    if (!CS.result) throw new Error('AI 返回格式无法解析，请重试');
     CS.activeSubTab = 'relations';
     CS.generatedImages = {};
 
